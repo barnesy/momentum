@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Dev Integration Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: #2d2d30;
+            padding: 1rem;
+            border-bottom: 1px solid #3e3e42;
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+            font-weight: normal;
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #3e3e42;
+        }
+
+        .panel:last-child {
+            border-right: none;
+        }
+
+        .panel-header {
+            background: #252526;
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid #3e3e42;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-content {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .editor {
+            width: 100%;
+            height: 300px;
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            color: #d4d4d4;
+            font-family: inherit;
+            font-size: 14px;
+            padding: 1rem;
+            resize: none;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .metric-card {
+            background: #252526;
+            padding: 1rem;
+            border-radius: 4px;
+            border: 1px solid #3e3e42;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            color: #4ec9b0;
+            margin: 0.5rem 0;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: #858585;
+        }
+
+        .status {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status.connected {
+            background: #4ec9b0;
+        }
+
+        .status.disconnected {
+            background: #f44747;
+        }
+
+        .suggestions {
+            list-style: none;
+        }
+
+        .suggestion-item {
+            padding: 0.5rem;
+            margin: 0.25rem 0;
+            background: #252526;
+            border-radius: 4px;
+            border: 1px solid #3e3e42;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .suggestion-item:hover {
+            background: #2d2d30;
+            border-color: #4ec9b0;
+        }
+
+        .log-entry {
+            padding: 0.25rem 0;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #2d2d30;
+        }
+
+        .log-entry.error {
+            color: #f44747;
+        }
+
+        .log-entry.info {
+            color: #3794ff;
+        }
+
+        .log-entry.success {
+            color: #4ec9b0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+
+        button:hover {
+            background: #1177bb;
+        }
+
+        button:disabled {
+            background: #3e3e42;
+            cursor: not-allowed;
+        }
+
+        .latency-bar {
+            height: 4px;
+            background: #3e3e42;
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .latency-fill {
+            height: 100%;
+            background: #4ec9b0;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Browser Development Integration - Ultra Low Latency Demo</h1>
+    </div>
+
+    <div class="container">
+        <div class="panel">
+            <div class="panel-header">
+                <span>Code Editor</span>
+                <span class="status disconnected" id="connection-status"></span>
+            </div>
+            <div class="panel-content">
+                <div class="controls">
+                    <button id="connect-btn">Connect</button>
+                    <button id="analyze-btn" disabled>Analyze Code</button>
+                    <button id="complete-btn" disabled>Get Completions</button>
+                </div>
+                <textarea class="editor" id="code-editor" placeholder="// Write your code here...
+function calculateSum(a, b) {
+    return a + b;
+}"></textarea>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <span>Real-time Suggestions</span>
+            </div>
+            <div class="panel-content">
+                <ul class="suggestions" id="suggestions-list"></ul>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <span>Performance Metrics</span>
+            </div>
+            <div class="panel-content">
+                <div class="metrics">
+                    <div class="metric-card">
+                        <div class="metric-label">Latency</div>
+                        <div class="metric-value" id="latency-value">--</div>
+                        <div class="latency-bar">
+                            <div class="latency-fill" id="latency-fill"></div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Cache Hit Rate</div>
+                        <div class="metric-value" id="cache-value">--</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Active Agents</div>
+                        <div class="metric-value" id="agents-value">--</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Edge Node</div>
+                        <div class="metric-value" id="edge-value">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            <span>Activity Log</span>
+        </div>
+        <div class="panel-content">
+            <div id="activity-log"></div>
+        </div>
+    </div>
+
+    <script src="demo.js"></script>
+    <script>
+        // This script tag is just to ensure compatibility
+            constructor() {
+                this.transport = null;
+                this.protocol = null; // Will be initialized when modules load
+                this.connected = false;
+                this.metrics = {
+                    latency: [],
+                    cacheHits: 0,
+                    totalRequests: 0
+                };
+                
+                this.initializeUI();
+            }
+
+            initializeUI() {
+                document.getElementById('connect-btn').addEventListener('click', () => this.connect());
+                document.getElementById('analyze-btn').addEventListener('click', () => this.analyzeCode());
+                document.getElementById('complete-btn').addEventListener('click', () => this.getCompletions());
+                
+                const editor = document.getElementById('code-editor');
+                editor.addEventListener('input', () => this.handleCodeChange());
+            }
+
+            async connect() {
+                this.log('Connecting to development server...', 'info');
+                
+                try {
+                    this.transport = new HybridTransport({
+                        enableDataChannel: true,
+                        enableWebTransport: true,
+                        webTransportUrl: 'https://localhost:3000/webtransport'
+                    });
+
+                    this.transport.addEventListener('rtc-connected', () => {
+                        this.log('WebRTC connected', 'success');
+                        this.updateConnectionStatus(true);
+                    });
+
+                    this.transport.addEventListener('webtransport-connected', () => {
+                        this.log('WebTransport connected', 'success');
+                    });
+
+                    this.transport.addEventListener('message', (event) => {
+                        this.handleMessage(event.detail);
+                    });
+
+                    this.transport.addEventListener('latency', (event) => {
+                        this.updateLatency(event.detail.latency);
+                    });
+
+                    await this.transport.connect();
+                    
+                    this.connected = true;
+                    document.getElementById('analyze-btn').disabled = false;
+                    document.getElementById('complete-btn').disabled = false;
+                    document.getElementById('connect-btn').textContent = 'Connected';
+                    document.getElementById('connect-btn').disabled = true;
+                    
+                    this.startMetricsPolling();
+                } catch (error) {
+                    this.log(`Connection failed: ${error.message}`, 'error');
+                }
+            }
+
+            async analyzeCode() {
+                const code = document.getElementById('code-editor').value;
+                
+                const message = {
+                    id: this.generateId(),
+                    timestamp: Date.now(),
+                    type: 'code',
+                    payload: {
+                        operation: 'analysis',
+                        code: code,
+                        language: 'javascript'
+                    },
+                    priority: 'high'
+                };
+
+                this.log('Analyzing code...', 'info');
+                await this.transport.send(message);
+            }
+
+            async getCompletions() {
+                const code = document.getElementById('code-editor').value;
+                const cursorPos = document.getElementById('code-editor').selectionStart;
+                
+                const prefix = code.substring(0, cursorPos);
+                const suffix = code.substring(cursorPos);
+                
+                const message = {
+                    id: this.generateId(),
+                    timestamp: Date.now(),
+                    type: 'command',
+                    payload: this.protocol.createCommand({
+                        type: 'complete',
+                        context: { code, cursorPos },
+                        prompt: prefix,
+                        options: { maxCompletions: '5' }
+                    }),
+                    priority: 'high'
+                };
+
+                this.log('Getting completions...', 'info');
+                await this.transport.send(message);
+            }
+
+            handleMessage(message) {
+                if (message.type === 'response') {
+                    this.handleResponse(message.payload);
+                }
+            }
+
+            handleResponse(response) {
+                this.metrics.totalRequests++;
+                
+                if (response.cached) {
+                    this.metrics.cacheHits++;
+                }
+
+                if (response.completions) {
+                    this.displaySuggestions(response.completions);
+                }
+
+                if (response.analysis) {
+                    this.log(`Analysis complete: ${response.analysis.symbols?.length || 0} symbols found`, 'success');
+                }
+
+                if (response.metadata) {
+                    this.updateMetrics(response.metadata);
+                }
+
+                this.updateCacheRate();
+            }
+
+            displaySuggestions(completions) {
+                const list = document.getElementById('suggestions-list');
+                list.innerHTML = '';
+                
+                completions.forEach(completion => {
+                    const item = document.createElement('li');
+                    item.className = 'suggestion-item';
+                    item.innerHTML = `
+                        <strong>${completion.label || completion.text}</strong>
+                        ${completion.detail ? `<br><small>${completion.detail}</small>` : ''}
+                    `;
+                    item.addEventListener('click', () => this.applySuggestion(completion));
+                    list.appendChild(item);
+                });
+            }
+
+            applySuggestion(completion) {
+                const editor = document.getElementById('code-editor');
+                const cursorPos = editor.selectionStart;
+                const code = editor.value;
+                
+                editor.value = code.substring(0, cursorPos) + completion.text + code.substring(cursorPos);
+                editor.selectionStart = editor.selectionEnd = cursorPos + completion.text.length;
+                editor.focus();
+                
+                this.log(`Applied suggestion: ${completion.label}`, 'success');
+            }
+
+            handleCodeChange() {
+                if (!this.connected) return;
+                
+                clearTimeout(this.changeTimeout);
+                this.changeTimeout = setTimeout(() => {
+                    this.sendContextUpdate();
+                }, 300);
+            }
+
+            async sendContextUpdate() {
+                const code = document.getElementById('code-editor').value;
+                
+                const message = {
+                    id: this.generateId(),
+                    timestamp: Date.now(),
+                    type: 'context',
+                    payload: {
+                        code: code,
+                        filePath: 'demo.js',
+                        language: 'javascript'
+                    },
+                    priority: 'normal'
+                };
+
+                await this.transport.send(message);
+            }
+
+            updateLatency(latency) {
+                this.metrics.latency.push(latency);
+                if (this.metrics.latency.length > 100) {
+                    this.metrics.latency.shift();
+                }
+
+                const avg = this.metrics.latency.reduce((a, b) => a + b, 0) / this.metrics.latency.length;
+                document.getElementById('latency-value').textContent = `${avg.toFixed(1)}ms`;
+                
+                const fill = document.getElementById('latency-fill');
+                const percentage = Math.min((avg / 200) * 100, 100);
+                fill.style.width = `${percentage}%`;
+                
+                if (avg < 50) {
+                    fill.style.background = '#4ec9b0';
+                } else if (avg < 100) {
+                    fill.style.background = '#dcdcaa';
+                } else {
+                    fill.style.background = '#f44747';
+                }
+            }
+
+            updateCacheRate() {
+                const rate = this.metrics.totalRequests > 0 
+                    ? (this.metrics.cacheHits / this.metrics.totalRequests * 100).toFixed(1)
+                    : 0;
+                document.getElementById('cache-value').textContent = `${rate}%`;
+            }
+
+            updateMetrics(metadata) {
+                if (metadata.nodeId) {
+                    document.getElementById('edge-value').textContent = metadata.nodeId.replace('edge-', '');
+                }
+            }
+
+            updateConnectionStatus(connected) {
+                const status = document.getElementById('connection-status');
+                status.className = `status ${connected ? 'connected' : 'disconnected'}`;
+            }
+
+            startMetricsPolling() {
+                setInterval(async () => {
+                    if (!this.connected) return;
+                    
+                    const stats = this.transport.getLatencyStats();
+                    document.getElementById('agents-value').textContent = '5';
+                }, 2000);
+            }
+
+            log(message, type = 'info') {
+                const log = document.getElementById('activity-log');
+                const entry = document.createElement('div');
+                entry.className = `log-entry ${type}`;
+                entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+                log.appendChild(entry);
+                log.scrollTop = log.scrollHeight;
+            }
+
+            generateId() {
+                return `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            }
+        }
+
+        window.demoClient = new DemoClient();
+    </script>
+</body>
+</html>

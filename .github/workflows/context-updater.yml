@@ -1,0 +1,127 @@
+name: Update Development Context
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    types: [opened, synchronize, closed]
+  issues:
+    types: [opened, closed, labeled]
+  discussion:
+    types: [created, answered]
+  workflow_run:
+    workflows: ["*"]
+    types: [completed]
+
+jobs:
+  update-context:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      discussions: write
+      
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Calculate Development Velocity
+        id: velocity
+        run: |
+          # Calculate metrics
+          COMMITS_TODAY=$(git log --since="24 hours ago" --oneline | wc -l)
+          COMMITS_WEEK=$(git log --since="7 days ago" --oneline | wc -l)
+          
+          # Get PR metrics using GitHub CLI
+          OPEN_PRS=$(gh pr list --state open --json number --jq length)
+          MERGED_THIS_WEEK=$(gh pr list --state merged --limit 100 --json mergedAt --jq '[.[] | select(.mergedAt >= (now - 604800))] | length')
+          
+          echo "commits_today=$COMMITS_TODAY" >> $GITHUB_OUTPUT
+          echo "commits_week=$COMMITS_WEEK" >> $GITHUB_OUTPUT
+          echo "open_prs=$OPEN_PRS" >> $GITHUB_OUTPUT
+          echo "merged_week=$MERGED_THIS_WEEK" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+      
+      - name: Update Context Files
+        run: |
+          mkdir -p .github/CONTEXT
+          
+          # Create context JSON
+          cat > .github/CONTEXT/current-state.json << EOF
+          {
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "event": "${{ github.event_name }}",
+            "repository": "${{ github.repository }}",
+            "metrics": {
+              "commits_today": ${{ steps.velocity.outputs.commits_today }},
+              "commits_week": ${{ steps.velocity.outputs.commits_week }},
+              "open_prs": ${{ steps.velocity.outputs.open_prs }},
+              "merged_this_week": ${{ steps.velocity.outputs.merged_week }}
+            },
+            "recent_activity": []
+          }
+          EOF
+          
+          # Append to event log
+          echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) - ${{ github.event_name }} - ${{ github.actor }}" >> .github/CONTEXT/events.log
+      
+      - name: Detect Patterns
+        id: patterns
+        run: |
+          # Simple pattern detection
+          if [ "${{ github.event_name }}" = "push" ] && [ "$(date +%u)" = "5" ]; then
+            echo "pattern=friday-push" >> $GITHUB_OUTPUT
+            echo "⚠️ Friday push detected - be careful!" >> .github/CONTEXT/patterns.log
+          fi
+          
+          if [ "${{ steps.velocity.outputs.commits_today }}" -gt "10" ]; then
+            echo "pattern=high-velocity" >> $GITHUB_OUTPUT
+            echo "🚀 High velocity day - ${{ steps.velocity.outputs.commits_today }} commits!" >> .github/CONTEXT/patterns.log
+          fi
+      
+      - name: Update Performance Metrics
+        if: github.event_name == 'workflow_run'
+        run: |
+          # Record workflow performance
+          echo "${{ github.event.workflow_run.name }},${{ github.event.workflow_run.conclusion }},$(date -u +%s)" >> .github/CONTEXT/performance.csv
+      
+      - name: Generate Context Summary
+        run: |
+          cat > .github/CONTEXT/README.md << 'EOF'
+          # Development Context
+          
+          Last Updated: $(date -u +%Y-%m-%dT%H:%M:%SZ)
+          
+          ## Current Velocity
+          - Commits Today: ${{ steps.velocity.outputs.commits_today }}
+          - Commits This Week: ${{ steps.velocity.outputs.commits_week }}
+          - Open PRs: ${{ steps.velocity.outputs.open_prs }}
+          - Merged This Week: ${{ steps.velocity.outputs.merged_week }}
+          
+          ## Recent Patterns
+          $(tail -10 .github/CONTEXT/patterns.log 2>/dev/null || echo "No patterns detected yet")
+          
+          ## Activity Log
+          $(tail -20 .github/CONTEXT/events.log 2>/dev/null || echo "No events recorded yet")
+          
+          ---
+          *This context is automatically maintained and improves over time.*
+          EOF
+      
+      - name: Commit Context Updates
+        if: github.event_name == 'push' || github.event_name == 'workflow_run'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          git add .github/CONTEXT/
+          git diff --staged --quiet || git commit -m "Context: Auto-update from ${{ github.event_name }} event [skip ci]"
+          git push

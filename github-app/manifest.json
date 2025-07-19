@@ -1,0 +1,40 @@
+{
+  "name": "Momentum Dev",
+  "url": "https://github.com/apps/living-context-dev",
+  "description": "Building development velocity through intelligent GitHub context",
+  "hook_attributes": {
+    "url": "https://living-context.edge.dev/webhook"
+  },
+  "redirect_url": "https://living-context.edge.dev/callback",
+  "callback_urls": [
+    "https://living-context.edge.dev/callback"
+  ],
+  "public": true,
+  "default_permissions": {
+    "actions": "write",
+    "contents": "write",
+    "issues": "write",
+    "pull_requests": "write",
+    "repository_projects": "write",
+    "discussions": "write",
+    "metadata": "read",
+    "statuses": "write",
+    "checks": "write"
+  },
+  "default_events": [
+    "push",
+    "pull_request",
+    "pull_request_review",
+    "pull_request_review_comment",
+    "issues",
+    "issue_comment",
+    "discussion",
+    "discussion_comment",
+    "create",
+    "delete",
+    "repository",
+    "workflow_run",
+    "check_run",
+    "check_suite"
+  ]
+}

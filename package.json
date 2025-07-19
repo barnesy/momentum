@@ -1,0 +1,26 @@
+{
+  "name": "browser-dev-integration",
+  "version": "0.1.0",
+  "description": "Ultra-low latency browser development integration",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "protobufjs": "^7.2.6",
+    "simple-peer": "^9.11.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "@types/simple-peer": "^9.11.8",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.1.4"
+  }
+}

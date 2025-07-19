@@ -1,0 +1,158 @@
+/* Living Context Overlay */
+#living-context-overlay {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 280px;
+  background: #24292e;
+  border: 1px solid #444d56;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 9999;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  color: #e1e4e8;
+}
+
+.lc-header {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: #1f2428;
+  border-bottom: 1px solid #444d56;
+  border-radius: 8px 8px 0 0;
+  cursor: move;
+}
+
+.lc-title {
+  flex: 1;
+  font-weight: 600;
+  color: #58a6ff;
+}
+
+.lc-status {
+  font-size: 8px;
+  margin: 0 8px;
+}
+
+.lc-minimize {
+  background: none;
+  border: none;
+  color: #8b949e;
+  cursor: pointer;
+  padding: 0 4px;
+  font-size: 14px;
+}
+
+.lc-minimize:hover {
+  color: #c9d1d9;
+}
+
+.lc-content {
+  padding: 12px;
+}
+
+.lc-metric {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid #30363d;
+}
+
+.lc-metric:last-child {
+  border-bottom: none;
+  margin-bottom: 12px;
+}
+
+.lc-label {
+  color: #8b949e;
+}
+
+.lc-value {
+  font-weight: 600;
+  color: #58a6ff;
+}
+
+.lc-patterns {
+  margin-top: 12px;
+}
+
+.lc-pattern-header {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #f0883e;
+}
+
+.lc-pattern {
+  padding: 4px 8px;
+  margin-bottom: 4px;
+  background: #30363d;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #c9d1d9;
+}
+
+/* GitHub UI Enhancements */
+.lc-pr-context {
+  padding: 16px;
+  background: #f6f8fa;
+  border: 1px solid #e1e4e8;
+  border-radius: 6px;
+}
+
+.lc-pr-metric {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.lc-pr-metric span {
+  color: #586069;
+}
+
+.lc-pr-metric strong {
+  color: #0366d6;
+}
+
+.lc-issue-indicator {
+  display: inline-block;
+  margin-right: 8px;
+  color: #f0883e;
+  font-size: 10px;
+  vertical-align: middle;
+}
+
+.lc-velocity-badge {
+  display: flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: #0366d6;
+  color: white;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.lc-velocity-icon {
+  margin-right: 4px;
+  font-size: 14px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .lc-pr-context {
+    background: #161b22;
+    border-color: #30363d;
+  }
+  
+  .lc-pr-metric span {
+    color: #8b949e;
+  }
+  
+  .lc-pr-metric strong {
+    color: #58a6ff;
+  }
+}
