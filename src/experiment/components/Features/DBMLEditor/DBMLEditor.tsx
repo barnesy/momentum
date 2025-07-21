@@ -228,9 +228,16 @@ export const DBMLEditor: React.FC = () => {
   const parseDBML = useCallback((schema: string) => {
     try {
       const parsed = Parser.parse(schema, 'dbml');
-      setParsedSchema(parsed);
+      // Extract the first schema (DBML parser returns schemas array)
+      const processedSchema = {
+        tables: parsed.schemas[0]?.tables || [],
+        refs: parsed.schemas[0]?.refs || [],
+        enums: parsed.schemas[0]?.enums || [],
+        project: parsed.schemas[0]?.project
+      };
+      setParsedSchema(processedSchema);
       setParseError(null);
-      return parsed;
+      return processedSchema;
     } catch (error: any) {
       setParseError(error.message || 'Failed to parse DBML schema');
       setParsedSchema(null);
@@ -248,17 +255,18 @@ export const DBMLEditor: React.FC = () => {
 
   // Export to SQL
   const exportToSQL = useCallback(() => {
-    const parsed = parseDBML(dbml);
-    if (!parsed) return;
+    if (!dbml) return;
 
     try {
-      const sql = exporter.export(parsed, exportFormat);
+      // Parse the DBML directly for export
+      const parsed = Parser.parse(dbml, 'dbml');
+      const sql = exporter.export(parsed.schemas[0], exportFormat);
       setExportedSQL(sql);
       setShowExportDialog(true);
     } catch (error: any) {
       setSnackbarMessage(`Export error: ${error.message}`);
     }
-  }, [dbml, exportFormat, parseDBML]);
+  }, [dbml, exportFormat]);
 
   // Save/Load functions
   const saveSchema = () => {
