@@ -1,123 +1,165 @@
-# Momentum
+# Momentum ⚡
 
-Building development velocity through intelligent GitHub context. Transform your repository into a living system that learns and accelerates your workflow.
+A real-time development context system that tracks your coding momentum across GitHub and your local environment.
 
-## Key Features
+## Overview
 
-### ⚡ Momentum Features
-- **Hybrid WebRTC/WebTransport Protocol**: Seamlessly switches between protocols for optimal performance
-- **Binary Protocol Buffers**: Efficient message encoding for minimal overhead
-- **Intelligent Transport Selection**: Priority-based routing with automatic failover
-- **Real-time Latency Tracking**: Continuous monitoring with p50/p95/p99 metrics
+Momentum provides intelligent context awareness by:
+- 📊 Tracking code changes in real-time
+- 🔍 Analyzing patterns across your repositories  
+- 🤖 Providing AI-powered insights
+- 🚀 Accelerating your development workflow
 
-### 🧠 Multi-Agent Intelligence System
-- **Code Analysis Agent**: AST parsing, symbol extraction, dependency analysis
-- **Pattern Detection Agent**: Identifies coding patterns and anomalies
-- **Error Diagnosis Agent**: Smart error analysis with solution suggestions
-- **Performance Agent**: Bottleneck detection and optimization recommendations
-- **Suggestion Engine**: Context-aware code completions and refactoring
+## Tech Stack
 
-### 🌐 Edge Computing Integration
-- **Distributed AI Models**: Nano/Micro/Mini models deployed across edge locations
-- **Intelligent Load Balancing**: Routes requests to optimal edge nodes
-- **Predictive Caching**: Pre-computes common operations based on usage patterns
-- **Regional Optimization**: Sub-20ms latency for cached responses
+- **Frontend**: React 19 + TypeScript + Material-UI (MUI)
+- **Build Tool**: Vite 7
+- **Backend**: Node.js + Express
+- **Extension**: Chrome Manifest V3
+- **Real-time**: Server-Sent Events (SSE) + WebSockets
 
-### 🔍 Browser Extension for Context Intelligence
-- **Real-time DOM Monitoring**: Tracks changes and hot-reloads
-- **Framework Detection**: Automatically identifies React, Vue, Angular, etc.
-- **Code Pattern Learning**: Builds project-specific intelligence
-- **Cross-Tab Context Sharing**: Unified development context across browser windows
-
-## How Momentum Works
+## Project Structure
 
 ```
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│  Browser Tab    │────▶│  Edge Worker     │────▶│  Agent System   │
-│  + Extension    │     │  (Caching)       │     │  (5 Agents)     │
-└─────────────────┘     └──────────────────┘     └─────────────────┘
-         │                       │                         │
-         │                       ▼                         │
-         │              ┌──────────────────┐              │
-         └─────────────▶│  Hybrid Transport │◀─────────────┘
-                        │  WebRTC/WebTrans  │
-                        └──────────────────┘
-                                 │
-                        ┌────────▼─────────┐
-                        │  Distributed AI   │
-                        │  Edge Nodes       │
-                        └──────────────────┘
+momentum/
+├── src/                    # Main application source
+│   ├── experiment/         # React TypeScript app
+│   ├── theme/              # MUI theme configuration
+│   ├── types/              # TypeScript type definitions
+│   └── demo/               # Demo components
+├── github-app/             # GitHub integration server
+│   └── src/                # Server source files
+├── extension/              # Chrome extension (v2)
+├── scripts/                # Build and utility scripts
+├── tests/                  # Test files
+└── docs/                   # Documentation
 ```
 
-## Quick Start with Momentum
+## Quick Start
 
 1. Install dependencies:
 ```bash
 npm install
+cd github-app && npm install
 ```
 
-2. Start the development server:
+2. Configure environment:
 ```bash
-npm run dev
+cp github-app/.env.example github-app/.env
+# Add your GitHub App credentials and OpenAI API key
 ```
 
-3. Install the browser extension:
-   - Open Chrome/Edge
-   - Navigate to chrome://extensions
+3. Start the development server:
+```bash
+npm run dev              # Starts Vite dev server on http://localhost:5173
+```
+
+4. Start the backend server:
+```bash
+cd github-app
+npm run dev              # Starts server on http://localhost:3000
+```
+
+5. Load the Chrome extension:
+   - Open Chrome Extensions (chrome://extensions)
    - Enable Developer Mode
-   - Click "Load unpacked" and select the `extension` folder
+   - Load unpacked from `extension/`
 
-4. Open the demo page:
-   - Navigate to http://localhost:5173/src/demo/index.html
-   - Click "Connect" to establish WebRTC/WebTransport connection
-   - Start coding to see real-time suggestions and analysis
+## Main Features
 
-## Performance Benchmarks
+### Live Theme Editor
+Access the theme editor at http://localhost:5173/src/experiment/index.html
+- Real-time theme customization
+- Material-UI component preview
+- CSS variable integration
+- Responsive design testing
 
-- **Code Completion Latency**: 15-25ms (cached), 50-80ms (computed)
-- **Context Analysis**: 30-50ms for full file analysis
-- **Pattern Detection**: 10-20ms for common patterns
-- **Edge Cache Hit Rate**: 75-85% for common operations
+### Context Management
+- Automatic context tracking
+- Pattern detection and analysis
+- Error monitoring with AI-powered fixes
+- Performance metrics visualization
 
-## Human Testing Guide
+### Chrome Extension
+- GitHub activity monitoring
+- Real-time error detection
+- Autonomous fix suggestions
+- MUI component detection
 
-### Test Scenarios
+## Development Scripts
 
-1. **Latency Testing**:
-   - Type code rapidly and observe completion suggestions
-   - Monitor the latency meter (should stay under 100ms)
-   - Try different code patterns to test cache effectiveness
+```bash
+# Frontend
+npm run dev         # Start Vite dev server
+npm run build       # Build for production
+npm run preview     # Preview production build
+npm run lint        # Run ESLint
+npm run typecheck   # Run TypeScript checks
 
-2. **Context Awareness**:
-   - Write React/Vue/Angular code to test framework detection
-   - Create errors to test the diagnosis system
-   - Import modules to test dependency analysis
+# Backend (in github-app/)
+npm run dev         # Start with auto-reload
+npm run start       # Start production server
+npm run claude      # Start Claude listener
+```
 
-3. **Multi-Agent Collaboration**:
-   - Request code analysis while getting completions
-   - Observe how agents work together in the activity log
-   - Check consensus confidence scores
+## Architecture
 
-4. **Edge Performance**:
-   - Disconnect and reconnect to test failover
-   - Monitor which edge node serves your requests
-   - Compare cached vs computed response times
+```
+┌─────────────┐     ┌──────────────┐     ┌─────────────┐
+│   Browser   │────▶│    Vite +    │────▶│   GitHub    │
+│  Extension  │◀────│ Express API  │◀────│   Webhooks  │
+└─────────────┘     └──────────────┘     └─────────────┘
+       │                    │                     │
+       └────────────────────┴─────────────────────┘
+                     SSE + WebSocket
+```
 
-## Development
+## Environment Variables
 
-Momentum consists of several key components:
+### GitHub App (.env)
+```
+GITHUB_APP_ID=your_app_id
+GITHUB_PRIVATE_KEY=your_private_key
+GITHUB_WEBHOOK_SECRET=your_webhook_secret
+OPENAI_API_KEY=your_openai_key
+```
 
-- **HybridTransport**: Manages WebRTC and WebTransport connections
-- **CodeProtocol**: Binary protocol for efficient code-related messages
-- **MultiAgentSystem**: Coordinates specialized AI agents
-- **DistributedAISystem**: Manages edge-deployed models
-- **EdgeWorker**: Handles caching and pre-computation
-- **Browser Extension**: Monitors and enhances browser context
+## Testing
 
-## Future Enhancements
+```bash
+# Run all tests
+cd scripts && ./test-system.sh
 
-- WebGPU acceleration for local inference
-- Collaborative editing with operational transforms
-- Plugin system for custom agents
-- IDE integration via Language Server Protocol
-- Blockchain-based model training rewards
+# Test individual components
+node tests/test-error-logger.js
+```
+
+## Troubleshooting
+
+### Vite Import Errors
+If you see "Failed to resolve import" errors:
+1. Ensure all imports use relative paths (not aliases)
+2. Check that file extensions are included for TypeScript files
+3. Restart the Vite dev server
+
+### Port Conflicts
+- Frontend: http://localhost:5173 (Vite)
+- Backend API: http://localhost:3000 (Express)
+- Error Reporter: http://localhost:8765
+- Claude Listener: http://localhost:8766
+
+### Extension Not Loading
+1. Check that manifest.json is valid
+2. Ensure all referenced files exist
+3. Check Chrome DevTools for errors
+
+## Contributing
+
+1. Create a feature branch
+2. Make your changes
+3. Run linting and type checks
+4. Submit a pull request
+
+## License
+
+MIT

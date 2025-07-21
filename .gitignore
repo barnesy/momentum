@@ -1,9 +1,69 @@
+# Dependencies
 node_modules/
+.pnp
+.pnp.js
+
+# Production
 dist/
+build/
+
+# Testing
+coverage/
+*.lcov
+.nyc_output
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Environment files
 .env
 .env.local
-*.log
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Editor directories and files
+.vscode/
+.idea/
 .DS_Store
+*.swp
+*.swo
+*~
+
+# Build files
+.vite/
+.vite-temp/
+.rollup.cache/
+
+# OS files
+Thumbs.db
+
+# TypeScript
+*.tsbuildinfo
+
+# Archive directories
+archive/
+
+# Temporary files
+*.tmp
+*.temp
+.temp/
+.tmp/
+
+# GitHub App specific
+github-app/.env
+github-app/logs/
+
+# Extension build files
+extension/dist/
+extension/build/
+
+# Other tools
 *.pem
 ngrok
 .vercel
