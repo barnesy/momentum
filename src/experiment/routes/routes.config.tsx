@@ -22,6 +22,7 @@ import {
   CollectionsBookmark as CollectionsBookmarkIcon,
   DataObject as DataObjectIcon,
   AccountBalance as AccountBalanceIcon,
+  Info as InfoIcon,
 } from '@mui/icons-material';
 
 // Lazy load all feature components for better performance
