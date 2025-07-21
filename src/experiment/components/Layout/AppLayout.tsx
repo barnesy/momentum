@@ -37,6 +37,7 @@ import { PatternCatalog } from '../Features/PatternCatalog/PatternCatalog';
 import { DBMLEditor } from '../Features/DBMLEditor/DBMLEditor';
 import { BudgetingDashboard } from '../rejected/Budgeting/BudgetingDashboard';
 import { BudgetCategoryCardPreview } from '../approved/BudgetCategoryCardPreview';
+import { TailwindTest } from '../Features/TailwindTest';
 
 export const AppLayout: React.FC = () => {
   const theme = useTheme();
@@ -82,6 +83,8 @@ export const AppLayout: React.FC = () => {
         return <BudgetingDashboard />;
       case 'budget-category-preview':
         return <BudgetCategoryCardPreview />;
+      case 'tailwind-test':
+        return <TailwindTest />;
       default:
         return (
           <Box sx={{ p: 3 }}>

@@ -67,6 +67,7 @@ const navigationItems: NavigationItem[] = [
   { id: 'dbml-editor', label: 'DBML Asset Generator', icon: <DataObjectIcon />, section: 'Customization' },
   { id: 'budgeting', label: 'Budgeting Dashboard', icon: <AccountBalanceIcon />, section: 'Demonstrations', isRejected: true },
   { id: 'budget-category-preview', label: 'BudgetCategoryCard Preview', icon: <AccountBalanceIcon />, section: 'Demonstrations' },
+  { id: 'tailwind-test', label: 'Tailwind CSS Test', icon: <PaletteIcon />, section: 'Demonstrations' },
 ];
 
 export const Navigation: React.FC<NavigationProps> = ({

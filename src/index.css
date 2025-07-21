@@ -1,0 +1,132 @@
+/* Tailwind CSS Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Layer Order for MUI + Tailwind Integration */
+@layer mui, base, components, utilities;
+
+/* Custom CSS Variables that can be used in both MUI and Tailwind */
+:root {
+  /* Custom spacing scale */
+  --spacing-unit: 8px;
+  
+  /* Custom colors that complement MUI */
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  
+  /* Custom shadows */
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.16);
+  
+  /* Custom transitions */
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 300ms ease-in-out;
+  --transition-slow: 500ms ease-in-out;
+}
+
+/* Dark mode CSS variables */
+[data-theme="dark"] {
+  --gradient-primary: linear-gradient(135deg, #434343 0%, #000000 100%);
+  --gradient-secondary: linear-gradient(135deg, #3b3b3b 0%, #1a1a1a 100%);
+  --shadow-soft: 0 2px 8px rgba(255, 255, 255, 0.08);
+  --shadow-medium: 0 4px 16px rgba(255, 255, 255, 0.12);
+  --shadow-strong: 0 8px 32px rgba(255, 255, 255, 0.16);
+}
+
+/* Custom Tailwind Components using MUI theme values */
+@layer components {
+  /* Card with MUI elevation */
+  .tw-card {
+    background-color: var(--mui-palette-background-paper);
+    border-radius: var(--mui-shape-borderRadius-md, 8px);
+    box-shadow: var(--mui-shadows-2);
+  }
+  
+  /* Button variants using MUI colors */
+  .tw-btn-primary {
+    background-color: var(--mui-palette-primary-main);
+    color: var(--mui-palette-primary-contrastText);
+    padding: 8px 16px;
+    border-radius: var(--mui-shape-borderRadius-md, 8px);
+    transition: background-color 300ms ease-in-out;
+  }
+  
+  .tw-btn-primary:hover {
+    background-color: var(--mui-palette-primary-dark);
+  }
+  
+  .tw-btn-secondary {
+    background-color: var(--mui-palette-secondary-main);
+    color: var(--mui-palette-secondary-contrastText);
+    padding: 8px 16px;
+    border-radius: var(--mui-shape-borderRadius-md, 8px);
+    transition: background-color 300ms ease-in-out;
+  }
+  
+  .tw-btn-secondary:hover {
+    background-color: var(--mui-palette-secondary-dark);
+  }
+  
+  /* Text utilities using MUI typography */
+  .tw-text-primary {
+    color: var(--mui-palette-text-primary);
+  }
+  
+  .tw-text-secondary {
+    color: var(--mui-palette-text-secondary);
+  }
+  
+  /* Gradient utilities */
+  .tw-gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .tw-gradient-secondary {
+    background: var(--gradient-secondary);
+  }
+  
+  .tw-gradient-success {
+    background: var(--gradient-success);
+  }
+}
+
+/* Custom Utilities */
+@layer utilities {
+  /* Spacing utilities using MUI theme spacing */
+  .mui-spacing-1 {
+    margin: var(--mui-spacing-1);
+  }
+  
+  .mui-spacing-2 {
+    margin: var(--mui-spacing-2);
+  }
+  
+  /* Shadow utilities */
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+  
+  .shadow-medium {
+    box-shadow: var(--shadow-medium);
+  }
+  
+  .shadow-strong {
+    box-shadow: var(--shadow-strong);
+  }
+  
+  /* Transition utilities */
+  .transition-fast {
+    transition-duration: var(--transition-fast);
+  }
+  
+  .transition-normal {
+    transition-duration: var(--transition-normal);
+  }
+  
+  .transition-slow {
+    transition-duration: var(--transition-slow);
+  }
+}

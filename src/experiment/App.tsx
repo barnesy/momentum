@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import GlobalStyles from '@mui/material/GlobalStyles';
 import Box from '@mui/material/Box';
 import { createAppTheme, defaultThemeConfig } from '../theme/theme';
 import { ThemeConfig } from '../types/theme.types';
@@ -61,14 +62,21 @@ function App() {
   };
 
   return (
-    <ThemeContext.Provider value={themeContextValue}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-          <AppLayout />
-        </Box>
-      </ThemeProvider>
-    </ThemeContext.Provider>
+    <StyledEngineProvider injectFirst>
+      <ThemeContext.Provider value={themeContextValue}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline enableColorScheme />
+          <GlobalStyles
+            styles={{
+              '@layer mui, base, components, utilities': {},
+            }}
+          />
+          <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+            <AppLayout />
+          </Box>
+        </ThemeProvider>
+      </ThemeContext.Provider>
+    </StyledEngineProvider>
   );
 }
 
