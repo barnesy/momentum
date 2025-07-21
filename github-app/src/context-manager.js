@@ -1,3 +1,5 @@
+import { ContextVersioning } from './context-versioning.js';
+
 export class ContextManager {
   constructor() {
     this.context = {
@@ -17,6 +19,13 @@ export class ContextManager {
     
     this.maxEvents = 1000;
     this.maxCommits = 100;
+    this.versioning = new ContextVersioning();
+    
+    // Create initial version
+    this.versioning.createVersion(this.context, {
+      source: 'initialization',
+      description: 'Initial context state'
+    });
   }
 
   async processEvent(eventName, payload) {
@@ -59,6 +68,16 @@ export class ContextManager {
     this.updateVelocityMetrics();
     
     this.context.metrics.lastUpdated = timestamp;
+    
+    // Create version on significant events
+    if (this.shouldCreateVersion(eventName)) {
+      this.createVersion({
+        source: 'event',
+        event: eventName,
+        repository: payload.repository?.full_name,
+        actor: payload.sender?.login
+      });
+    }
     
     return this.getSnapshot();
   }
@@ -221,6 +240,60 @@ export class ContextManager {
 
   getCurrentContext() {
     return this.context;
+  }
+  
+  // Create a version checkpoint
+  createVersion(metadata = {}) {
+    return this.versioning.createVersion(this.context, {
+      ...metadata,
+      timestamp: Date.now()
+    });
+  }
+  
+  // Get version history
+  getVersionHistory(limit = 50) {
+    return this.versioning.getHistory(null, limit);
+  }
+  
+  // Rollback to a specific version
+  rollbackToVersion(versionId) {
+    const version = this.versioning.rollback(versionId);
+    this.context = version.context;
+    return version;
+  }
+  
+  // Compare versions
+  compareVersions(versionId1, versionId2) {
+    return this.versioning.compareVersions(versionId1, versionId2);
+  }
+  
+  // Get version analytics
+  getVersionAnalytics() {
+    const history = this.versioning.getHistory();
+    const totalVersions = history.length;
+    const recentVersions = history.filter(v => v.timestamp > Date.now() - 24 * 60 * 60 * 1000);
+    
+    return {
+      totalVersions,
+      versionsToday: recentVersions.length,
+      averageVersionSize: history.reduce((sum, v) => sum + (v.deltaSize || 0), 0) / totalVersions,
+      branches: Array.from(this.versioning.branches.keys()),
+      currentBranch: this.versioning.activeBranch
+    };
+  }
+  
+  // Determine if event should trigger versioning
+  shouldCreateVersion(eventName) {
+    const significantEvents = [
+      'push',
+      'pull_request',
+      'release',
+      'deployment',
+      'repository',
+      'milestone'
+    ];
+    
+    return significantEvents.includes(eventName);
   }
 
   getRelevantContext(pullRequest) {

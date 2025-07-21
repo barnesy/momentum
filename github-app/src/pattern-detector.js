@@ -302,4 +302,76 @@ export class PatternDetector {
       .split(/\s+/)
       .filter(word => word.length > 2);
   }
+
+  getPatterns() {
+    const summary = {};
+    
+    // Summarize each pattern type
+    this.patterns.commits.forEach((value, key) => {
+      if (!summary.commits) summary.commits = {};
+      summary.commits[key] = {
+        count: value.count,
+        lastSeen: value.instances[value.instances.length - 1]?.timestamp || 0
+      };
+    });
+    
+    this.patterns.files.forEach((value, key) => {
+      if (!summary.files) summary.files = {};
+      summary.files[key] = {
+        count: value.count,
+        frequency: value.count / (value.instances.length || 1)
+      };
+    });
+    
+    this.patterns.workflows.forEach((value, key) => {
+      if (!summary.workflows) summary.workflows = {};
+      summary.workflows[key] = value.count;
+    });
+    
+    // Add detected patterns summary
+    summary.detected = {
+      totalPatterns: this.patterns.commits.size + this.patterns.files.size + 
+                     this.patterns.errors.size + this.patterns.workflows.size,
+      mostFrequent: this.getMostFrequentPattern(),
+      recentActivity: this.getRecentPatterns()
+    };
+    
+    return summary;
+  }
+  
+  getMostFrequentPattern() {
+    let maxCount = 0;
+    let mostFrequent = null;
+    
+    for (const [type, patterns] of Object.entries(this.patterns)) {
+      patterns.forEach((value, key) => {
+        if (value.count > maxCount) {
+          maxCount = value.count;
+          mostFrequent = { type, name: key, count: value.count };
+        }
+      });
+    }
+    
+    return mostFrequent;
+  }
+  
+  getRecentPatterns() {
+    const recent = [];
+    const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
+    
+    for (const [type, patterns] of Object.entries(this.patterns)) {
+      patterns.forEach((value, key) => {
+        const recentInstances = value.instances.filter(i => i.timestamp > fiveMinutesAgo);
+        if (recentInstances.length > 0) {
+          recent.push({
+            type,
+            name: key,
+            count: recentInstances.length
+          });
+        }
+      });
+    }
+    
+    return recent.slice(0, 5); // Return top 5 recent patterns
+  }
 }
