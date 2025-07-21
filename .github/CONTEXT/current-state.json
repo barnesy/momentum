@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-07-21T15:28:29Z",
+  "timestamp": "2025-07-21T15:29:50Z",
   "event": "push",
   "repository": "barnesy/momentum",
   "metrics": {
-    "commits_today": 24,
-    "commits_week": 29,
+    "commits_today": 26,
+    "commits_week": 31,
     "open_prs": 0,
     "merged_this_week": 0
   },
