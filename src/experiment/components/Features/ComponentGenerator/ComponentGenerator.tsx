@@ -67,24 +67,7 @@ export const ComponentGenerator: React.FC = () => {
 
   // Component collections by state
   const pendingComponents: ComponentInfo[] = [
-    {
-      name: 'DashboardDataTableCard',
-      component: PendingComponents.DashboardDataTableCard || (() => <div>Component not found</div>),
-      path: 'pending/DashboardDataTableCard',
-      hasDemo: true,
-    },
-    {
-      name: 'DashboardDataTableCardDemo',
-      component: PendingComponents.DashboardDataTableCardDemo || (() => <div>Component not found</div>),
-      path: 'pending/DashboardDataTableCardDemo',
-      hasDemo: true,
-    },
-    {
-      name: 'TestPage',
-      component: PendingComponents.TestPage || (() => <div>Component not found</div>),
-      path: 'pending/TestPage',
-      hasDemo: true,
-    },
+    // Currently no pending components
   ];
 
   const approvedComponents: ComponentInfo[] = [
@@ -119,6 +102,24 @@ export const ComponentGenerator: React.FC = () => {
       name: 'FinancialGoalCard',
       component: RejectedComponents.FinancialGoalCard || (() => <div>Component not found</div>),
       path: 'rejected/Budgeting/FinancialGoalCard',
+      hasDemo: true,
+    },
+    {
+      name: 'DashboardDataTableCard',
+      component: RejectedComponents.DashboardDataTableCard || (() => <div>Component not found</div>),
+      path: 'rejected/DashboardDataTable/DashboardDataTableCard',
+      hasDemo: true,
+    },
+    {
+      name: 'DashboardDataTableCardDemo',
+      component: RejectedComponents.DashboardDataTableCardDemo || (() => <div>Component not found</div>),
+      path: 'rejected/DashboardDataTable/DashboardDataTableCardDemo',
+      hasDemo: true,
+    },
+    {
+      name: 'TestPage',
+      component: RejectedComponents.TestPage || (() => <div>Component not found</div>),
+      path: 'rejected/DashboardDataTable/TestPage',
       hasDemo: true,
     },
   ];

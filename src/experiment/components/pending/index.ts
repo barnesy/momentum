@@ -1,3 +1,2 @@
-export { default as DashboardDataTableCard } from './DashboardDataTableCard';
-export { default as DashboardDataTableCardDemo } from './DashboardDataTableCardDemo';
-export { default as TestPage } from './TestPage';
+// Currently no pending components
+// Components will be added here as they are submitted for review
