@@ -8,19 +8,37 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .ts,.tsx",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "cd scripts && ./test-system.sh",
+    "setup": "cd scripts && ./setup.sh",
+    "start:system": "cd scripts && ./start-system.sh",
+    "stop:system": "cd scripts && ./stop-system.sh",
+    "server:dev": "cd github-app && npm run dev",
+    "server:start": "cd github-app && npm start",
+    "clean": "rm -rf node_modules dist .vite"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.2.0",
+    "@mui/material": "^7.2.0",
     "protobufjs": "^7.2.6",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "simple-peer": "^9.11.1"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
     "@types/simple-peer": "^9.11.8",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
+    "@vitejs/plugin-react": "^4.7.0",
     "eslint": "^9.0.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
     "typescript": "^5.3.3",
-    "vite": "^5.1.4"
+    "vite": "^7.0.5"
   }
 }
