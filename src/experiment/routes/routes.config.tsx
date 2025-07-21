@@ -39,7 +39,7 @@ const BudgetingDashboard = lazy(() => import('../components/rejected/Budgeting/B
 const BudgetCategoryCardPreview = lazy(() => import('../components/approved/BudgetCategoryCardPreview').then(m => ({ default: m.BudgetCategoryCardPreview })));
 const TailwindTest = lazy(() => import('../components/Features/TailwindTest/TailwindTest').then(m => ({ default: m.TailwindTest })));
 const Onboarding = lazy(() => import('../components/Features/Onboarding/Onboarding').then(m => ({ default: m.Onboarding })));
-const DataTableTest = lazy(() => import('../components/pending/TestPage').then(m => ({ default: m.default })));
+const DataTableTest = lazy(() => import('../components/rejected/DashboardDataTable/TestPage').then(m => ({ default: m.default })));
 
 export interface RouteConfig {
   id: string;
@@ -214,6 +214,7 @@ export const routes: RouteConfig[] = [
     component: DataTableTest,
     section: 'Demonstrations',
     description: 'Test the Dashboard DataTable Card component',
+    isRejected: true,
   },
 ];
 

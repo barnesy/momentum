@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import DashboardDataTableCard from './DashboardDataTableCard';
+import { DashboardDataTableCard } from './DashboardDataTableCard';
 
 const TestPage: React.FC = () => {
   const sampleData = [
