@@ -1,0 +1,137 @@
+// Momentum Project Database Schema
+// This schema represents the data structure for the Momentum browser development integration
+
+Project momentum {
+  database_type: 'PostgreSQL'
+  Note: 'Main database schema for Momentum project'
+}
+
+Table components {
+  id int [pk, increment]
+  name varchar [not null, unique]
+  category varchar [not null]
+  description text
+  status component_status [not null, default: 'pending']
+  code text [not null]
+  props_schema json
+  created_at timestamp [default: 'now()']
+  updated_at timestamp
+  created_by int [ref: > users.id]
+  
+  Indexes {
+    (category, status) [name: 'idx_component_category_status']
+    created_at [name: 'idx_component_created']
+  }
+  
+  Note: 'Stores React component patterns and templates'
+}
+
+Table component_reviews {
+  id int [pk, increment]
+  component_id int [ref: > components.id, not null]
+  reviewer_id int [ref: > users.id, not null]
+  status review_status [not null]
+  feedback text
+  reviewed_at timestamp [default: 'now()']
+  
+  Indexes {
+    component_id [name: 'idx_review_component']
+    (reviewer_id, status) [name: 'idx_review_user_status']
+  }
+}
+
+Table themes {
+  id int [pk, increment]
+  name varchar [not null, unique]
+  description text
+  config json [not null]
+  is_active boolean [default: false]
+  created_at timestamp [default: 'now()']
+  updated_at timestamp
+  created_by int [ref: > users.id]
+  
+  Note: 'Material-UI theme configurations'
+}
+
+Table github_connections {
+  id int [pk, increment]
+  user_id int [ref: > users.id, not null]
+  github_username varchar [not null]
+  access_token varchar [not null]
+  webhook_secret varchar
+  connected_at timestamp [default: 'now()']
+  last_sync timestamp
+  
+  Indexes {
+    user_id [unique, name: 'idx_github_user']
+  }
+}
+
+Table ai_interactions {
+  id int [pk, increment]
+  user_id int [ref: > users.id]
+  component_id int [ref: > components.id]
+  interaction_type varchar [not null]
+  prompt text [not null]
+  response text
+  model_used varchar
+  tokens_used int
+  created_at timestamp [default: 'now()']
+  
+  Indexes {
+    (user_id, created_at) [name: 'idx_ai_user_time']
+  }
+}
+
+Table users {
+  id int [pk, increment]
+  email varchar [unique, not null]
+  name varchar [not null]
+  role user_role [not null, default: 'developer']
+  preferences json
+  created_at timestamp [default: 'now()']
+  last_active timestamp
+}
+
+Table performance_metrics {
+  id int [pk, increment]
+  metric_type varchar [not null]
+  value decimal [not null]
+  metadata json
+  recorded_at timestamp [default: 'now()']
+  
+  Indexes {
+    (metric_type, recorded_at) [name: 'idx_metric_type_time']
+  }
+}
+
+// Enums
+Enum component_status {
+  pending
+  approved
+  rejected
+  production
+}
+
+Enum review_status {
+  approved
+  rejected
+  needs_changes
+  in_review
+}
+
+Enum user_role {
+  admin
+  developer
+  reviewer
+  viewer
+}
+
+// Table relationships documented
+Ref: component_reviews.component_id > components.id [delete: cascade]
+Ref: component_reviews.reviewer_id > users.id
+Ref: themes.created_by > users.id
+Ref: components.created_by > users.id
+Ref: github_connections.user_id - users.id
+Ref: ai_interactions.user_id > users.id
+Ref: ai_interactions.component_id > components.id
