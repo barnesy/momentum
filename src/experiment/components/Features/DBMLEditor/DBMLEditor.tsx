@@ -51,6 +51,7 @@ import Editor from '@monaco-editor/react';
 import { Parser, exporter } from '@dbml/core';
 import mermaid from 'mermaid';
 import { dbmlToMermaid } from '../../../utils/dbmlToMermaid';
+import { createDbdiagramUrl, createDbdiagramUrlBase64 } from '../../../utils/dbdiagramUrl';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -651,8 +652,24 @@ export const DBMLEditor: React.FC = () => {
                       size="small"
                       variant="outlined"
                       startIcon={<LinkIcon />}
-                      href="https://dbdiagram.io/d"
-                      target="_blank"
+                      onClick={() => {
+                        try {
+                          // Try the primary URL format
+                          const dbdiagramURL = createDbdiagramUrl(dbml);
+                          
+                          // Copy schema to clipboard as backup
+                          copyToClipboard(dbml);
+                          setSnackbarMessage('Schema copied to clipboard. Paste it in dbdiagram.io if not auto-filled.');
+                          
+                          // Open in new tab
+                          window.open(dbdiagramURL, '_blank');
+                        } catch (error) {
+                          // Fallback: just open dbdiagram.io
+                          window.open('https://dbdiagram.io/d', '_blank');
+                          copyToClipboard(dbml);
+                          setSnackbarMessage('Schema copied to clipboard. Paste it in dbdiagram.io.');
+                        }
+                      }}
                     >
                       Open in dbdiagram.io
                     </Button>
