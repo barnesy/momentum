@@ -37,6 +37,7 @@ const DBMLEditor = lazy(() => import('../components/Features/DBMLEditor/DBMLEdit
 const BudgetingDashboard = lazy(() => import('../components/rejected/Budgeting/BudgetingDashboard').then(m => ({ default: m.BudgetingDashboard })));
 const BudgetCategoryCardPreview = lazy(() => import('../components/approved/BudgetCategoryCardPreview').then(m => ({ default: m.BudgetCategoryCardPreview })));
 const TailwindTest = lazy(() => import('../components/Features/TailwindTest/TailwindTest').then(m => ({ default: m.TailwindTest })));
+const Onboarding = lazy(() => import('../components/Features/Onboarding/Onboarding').then(m => ({ default: m.Onboarding })));
 
 export interface RouteConfig {
   id: string;
@@ -56,6 +57,7 @@ export interface RouteConfig {
 
 export const ROUTE_PATHS = {
   HOME: '/',
+  ONBOARDING: '/onboarding',
   CONNECTION: '/connection',
   CONTEXT: '/context',
   AI: '/ai',
@@ -73,6 +75,17 @@ export const ROUTE_PATHS = {
 } as const;
 
 export const routes: RouteConfig[] = [
+  // Getting Started
+  {
+    id: 'onboarding',
+    path: ROUTE_PATHS.ONBOARDING,
+    label: 'Getting Started',
+    icon: <InfoIcon />,
+    component: Onboarding,
+    section: 'Getting Started',
+    description: 'Learn how to use the Experimentation Lab',
+  },
+  
   // Core Features
   {
     id: 'connection',
@@ -213,8 +226,10 @@ export const getRouteById = (id: string): RouteConfig | undefined => {
   return routes.find(route => route.id === id);
 };
 
-// Default route
-export const DEFAULT_ROUTE = ROUTE_PATHS.DBML_EDITOR;
+// Default route - show onboarding for new users
+export const DEFAULT_ROUTE = localStorage.getItem('momentum-onboarding-completed') 
+  ? ROUTE_PATHS.COMPONENT_GENERATOR 
+  : ROUTE_PATHS.ONBOARDING;
 
 // Protected routes (example)
 export const protectedRoutes = routes.filter(route => route.requiresAuth);

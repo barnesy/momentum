@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:experiment": "vite --open /src/experiment/",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .ts,.tsx",
@@ -18,7 +19,12 @@
     "clean": "rm -rf node_modules dist .vite",
     "test:e2e": "node tests/momentum-e2e.test.js",
     "test:e2e:watch": "nodemon --watch tests --watch src tests/momentum-e2e.test.js",
-    "test:visual": "node tests/simple-puppeteer-demo.js"
+    "test:visual": "node tests/simple-puppeteer-demo.js",
+    "create:pattern-branch": "node scripts/create-pattern-branch.js",
+    "commit:patterns": "node scripts/commit-patterns.js",
+    "submit:patterns": "node scripts/submit-patterns.js",
+    "clean:pending": "rm -rf src/experiment/components/pending/*",
+    "export:approved": "node scripts/export-approved.js"
   },
   "dependencies": {
     "@dbml/core": "^3.13.8-alpha.0",
