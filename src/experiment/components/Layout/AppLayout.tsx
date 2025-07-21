@@ -17,6 +17,8 @@ import {
   DialogActions,
   TextField,
   Button,
+  Breadcrumbs,
+  Link,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -24,119 +26,62 @@ import {
   Add as AddIcon,
   Close as CloseIcon,
   Send as SendIcon,
+  NavigateNext as NavigateNextIcon,
 } from '@mui/icons-material';
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { Navigation } from './Navigation';
-import { SSEConnection } from '../Features/Connection/SSEConnection';
-import { ContextManager } from '../Features/Context/ContextManager';
-import { ThemeEditor } from '../Features/ThemeEditor/ThemeEditor';
-import { AIIntegration } from '../Features/AI/AIIntegration';
-import { GitHubIntegration } from '../Features/GitHub/GitHubIntegration';
-import { Performance } from '../Features/Performance/Performance';
-import { ComponentGenerator } from '../Features/ComponentGenerator/ComponentGenerator';
-import { PatternCatalog } from '../Features/PatternCatalog/PatternCatalog';
-import { DBMLEditor } from '../Features/DBMLEditor/DBMLEditor';
-import { BudgetingDashboard } from '../rejected/Budgeting/BudgetingDashboard';
-import { BudgetCategoryCardPreview } from '../approved/BudgetCategoryCardPreview';
-import { TailwindTest } from '../Features/TailwindTest';
+import { getRouteByPath, routesBySection } from '../../routes/routes.config';
 
 export const AppLayout: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [drawerOpen, setDrawerOpen] = useState(!isMobile);
-  const [currentTab, setCurrentTab] = useState('connection');
+  const [currentTab, setCurrentTab] = useState('');
   const [promptPanelOpen, setPromptPanelOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get current route
+  const currentRoute = getRouteByPath(location.pathname);
 
   useEffect(() => {
     setDrawerOpen(!isMobile);
   }, [isMobile]);
 
+  // Sync currentTab with URL
+  useEffect(() => {
+    if (currentRoute) {
+      setCurrentTab(currentRoute.id);
+    }
+  }, [currentRoute]);
+
   const handleTabChange = (tabId: string) => {
-    setCurrentTab(tabId);
-    if (isMobile) {
-      setDrawerOpen(false);
+    // Find the route in any section
+    for (const section of Object.keys(routesBySection)) {
+      const route = routesBySection[section].find(r => r.id === tabId);
+      if (route) {
+        navigate(route.path);
+        if (isMobile) {
+          setDrawerOpen(false);
+        }
+        break;
+      }
     }
   };
 
-  const renderTabContent = () => {
-    switch (currentTab) {
-      case 'connection':
-        return <SSEConnection />;
-      case 'context':
-        return <ContextManager />;
-      case 'ai':
-        return <AIIntegration />;
-      case 'github':
-        return <GitHubIntegration />;
-      case 'performance':
-        return <Performance />;
-      case 'theme-editor':
-        return <ThemeEditor />;
-      case 'component-generator':
-        return <ComponentGenerator />;
-      case 'pattern-generator':
-        return <ComponentGenerator />; // Backwards compatibility
-      case 'pattern-catalog':
-        return <PatternCatalog />;
-      case 'dbml-editor':
-        return <DBMLEditor />;
-      case 'budgeting':
-        return <BudgetingDashboard />;
-      case 'budget-category-preview':
-        return <BudgetCategoryCardPreview />;
-      case 'tailwind-test':
-        return <TailwindTest />;
-      default:
-        return (
-          <Box sx={{ p: 3 }}>
-            <Typography variant="h5" gutterBottom>
-              {currentTab.charAt(0).toUpperCase() + currentTab.slice(1).replace('-', ' ')}
-            </Typography>
-            <Typography color="text.secondary">
-              This feature is under development. Check back soon!
-            </Typography>
-          </Box>
-        );
-    }
+  const handleDrawerToggle = () => {
+    setDrawerOpen(!drawerOpen);
   };
 
-  const drawerWidth = drawerOpen ? 280 : 0;
+  // Generate breadcrumbs
+  const breadcrumbs = currentRoute ? [
+    { label: 'Experiment', href: '/' },
+    { label: currentRoute.section, href: '#' },
+    { label: currentRoute.label, href: currentRoute.path },
+  ] : [];
 
   return (
     <>
-      <AppBar
-        position="fixed"
-        sx={{
-          width: { md: `calc(100% - ${drawerWidth}px)` },
-          ml: { md: `${drawerWidth}px` },
-          transition: theme.transitions.create(['margin', 'width'], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-          }),
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        }}
-      >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={() => setDrawerOpen(!drawerOpen)}
-            edge="start"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Momentum Experimentation Lab
-          </Typography>
-          <Chip
-            icon={<CheckCircleIcon />}
-            label="System Active"
-            color="success"
-            sx={{ bgcolor: alpha(theme.palette.common.white, 0.2), color: 'white' }}
-          />
-        </Toolbar>
-      </AppBar>
-
       <Navigation
         open={drawerOpen}
         isMobile={isMobile}
@@ -149,44 +94,132 @@ export const AppLayout: React.FC = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
-          width: { md: `calc(100% - ${drawerWidth}px)` },
-          ml: { md: `${drawerWidth}px` },
-          transition: theme.transitions.create(['margin', 'width'], {
+          ml: { md: drawerOpen ? '280px' : 0 },
+          transition: theme.transitions.create(['margin'], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
           }),
         }}
       >
-        <Toolbar />
-        <Container maxWidth="xl">
-          {renderTabContent()}
+        <AppBar
+          position="sticky"
+          sx={{
+            backgroundColor: alpha(theme.palette.background.paper, 0.8),
+            backdropFilter: 'blur(8px)',
+            borderBottom: `1px solid ${theme.palette.divider}`,
+            boxShadow: 'none',
+          }}
+        >
+          <Toolbar>
+            {isMobile && (
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="start"
+                onClick={handleDrawerToggle}
+                sx={{ mr: 2 }}
+              >
+                <MenuIcon />
+              </IconButton>
+            )}
+            
+            <Box sx={{ flexGrow: 1 }}>
+              {currentRoute && (
+                <>
+                  <Breadcrumbs
+                    separator={<NavigateNextIcon fontSize="small" />}
+                    sx={{ mb: 0.5 }}
+                  >
+                    {breadcrumbs.map((crumb, index) => (
+                      <Link
+                        key={index}
+                        color={index === breadcrumbs.length - 1 ? 'text.primary' : 'inherit'}
+                        href={crumb.href}
+                        underline="hover"
+                        onClick={(e) => {
+                          if (crumb.href === '#') {
+                            e.preventDefault();
+                          }
+                        }}
+                        sx={{ fontSize: '0.875rem' }}
+                      >
+                        {crumb.label}
+                      </Link>
+                    ))}
+                  </Breadcrumbs>
+                  
+                  <Box display="flex" alignItems="center" gap={2}>
+                    <Typography variant="h6" component="h1">
+                      {currentRoute.label}
+                    </Typography>
+                    {currentRoute.isRejected && (
+                      <Chip
+                        label="Rejected"
+                        size="small"
+                        color="error"
+                        variant="outlined"
+                      />
+                    )}
+                    {currentRoute.isPending && (
+                      <Chip
+                        label="Pending"
+                        size="small"
+                        color="warning"
+                        variant="outlined"
+                      />
+                    )}
+                  </Box>
+                  
+                  {currentRoute.description && (
+                    <Typography variant="caption" color="text.secondary">
+                      {currentRoute.description}
+                    </Typography>
+                  )}
+                </>
+              )}
+            </Box>
+
+            <Box display="flex" alignItems="center" gap={1}>
+              <Chip
+                icon={<CheckCircleIcon />}
+                label="Ready"
+                color="success"
+                size="small"
+                variant="outlined"
+              />
+            </Box>
+          </Toolbar>
+        </AppBar>
+
+        <Container maxWidth="xl" sx={{ py: 3 }}>
+          <Outlet />
         </Container>
       </Box>
 
-      {/* Floating Action Button */}
+      {/* AI Prompt Panel FAB */}
       <Fab
         color="primary"
-        aria-label="add"
+        aria-label="AI Assistant"
         sx={{
           position: 'fixed',
-          bottom: 16,
-          right: 16,
+          bottom: 24,
+          right: 24,
+          zIndex: theme.zIndex.speedDial,
         }}
         onClick={() => setPromptPanelOpen(true)}
       >
         <AddIcon />
       </Fab>
 
-      {/* Prompt Panel Dialog */}
+      {/* AI Prompt Dialog */}
       <Dialog
         open={promptPanelOpen}
         onClose={() => setPromptPanelOpen(false)}
-        maxWidth="sm"
+        maxWidth="md"
         fullWidth
       >
         <DialogTitle>
-          Quick Action
+          AI Assistant
           <IconButton
             aria-label="close"
             onClick={() => setPromptPanelOpen(false)}
@@ -194,6 +227,7 @@ export const AppLayout: React.FC = () => {
               position: 'absolute',
               right: 8,
               top: 8,
+              color: (theme) => theme.palette.grey[500],
             }}
           >
             <CloseIcon />

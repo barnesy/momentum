@@ -2,10 +2,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import GlobalStyles from '@mui/material/GlobalStyles';
-import { BrowserRouter } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { createAppTheme, defaultThemeConfig } from '../theme/theme';
 import { ThemeConfig } from '../types/theme.types';
-import { AppRouter } from './routes/AppRouter';
+import { AppLayout } from './components/Layout/AppLayout';
 
 // Theme Context
 interface ThemeContextValue {
@@ -69,24 +70,15 @@ function App() {
           <GlobalStyles
             styles={{
               '@layer mui, base, components, utilities': {},
-              body: {
-                backgroundColor: theme.palette.background.default,
-                color: theme.palette.text.primary,
-                transition: 'background-color 0.2s ease, color 0.2s ease',
-              },
-              // Smooth scrolling
-              html: {
-                scrollBehavior: 'smooth',
-              },
-              // Better focus styles
-              '*:focus-visible': {
-                outline: `2px solid ${theme.palette.primary.main}`,
-                outlineOffset: 2,
-              },
             }}
           />
           <BrowserRouter basename="/src/experiment">
-            <AppRouter />
+            <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+              <Routes>
+                <Route path="/" element={<Navigate to="/dbml-editor" replace />} />
+                <Route path="/*" element={<AppLayout />} />
+              </Routes>
+            </Box>
           </BrowserRouter>
         </ThemeProvider>
       </ThemeContext.Provider>
