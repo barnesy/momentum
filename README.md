@@ -145,13 +145,20 @@ OPENAI_API_KEY=your_openai_key
 
 ## Testing
 
-```bash
-# Run all tests
-cd scripts && ./test-system.sh
+Testing is now powered by BrowserTools MCP, providing AI-driven browser automation.
 
-# Test individual components
-node tests/test-error-logger.js
+### Quick Start
+```bash
+# Start dev server
+npm run dev
+
+# Use natural language commands with BrowserTools:
+# "Open the theme editor and test dark mode"
+# "Check if SSE connection works"
+# "Take a screenshot of the current state"
 ```
+
+See [Testing Guide](tests/README.md) and [BrowserTools Guide](docs/BROWSERTOOLS_GUIDE.md) for details.
 
 ## Troubleshooting
 
