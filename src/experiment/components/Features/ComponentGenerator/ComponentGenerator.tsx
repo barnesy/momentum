@@ -67,7 +67,24 @@ export const ComponentGenerator: React.FC = () => {
 
   // Component collections by state
   const pendingComponents: ComponentInfo[] = [
-    // No components currently pending
+    {
+      name: 'DashboardDataTableCard',
+      component: PendingComponents.DashboardDataTableCard || (() => <div>Component not found</div>),
+      path: 'pending/DashboardDataTableCard',
+      hasDemo: true,
+    },
+    {
+      name: 'DashboardDataTableCardDemo',
+      component: PendingComponents.DashboardDataTableCardDemo || (() => <div>Component not found</div>),
+      path: 'pending/DashboardDataTableCardDemo',
+      hasDemo: true,
+    },
+    {
+      name: 'TestPage',
+      component: PendingComponents.TestPage || (() => <div>Component not found</div>),
+      path: 'pending/TestPage',
+      hasDemo: true,
+    },
   ];
 
   const approvedComponents: ComponentInfo[] = [
@@ -151,6 +168,28 @@ export const ComponentGenerator: React.FC = () => {
           { id: 2, name: 'Vacation', target: 3000, current: 1200, deadline: '2025-08-15' },
         ],
       },
+      DashboardDataTableCard: {
+        title: 'User Management',
+        subtitle: 'Manage user accounts and permissions',
+        data: [
+          { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin', status: 'Active', department: 'Engineering', performance: 95 },
+          { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'Manager', status: 'Active', department: 'Marketing', performance: 88 },
+          { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'Developer', status: 'Inactive', department: 'Engineering', performance: 92 },
+        ],
+        columns: [
+          { field: 'name', headerName: 'Name', sortable: true },
+          { field: 'role', headerName: 'Role', sortable: true },
+          { field: 'department', headerName: 'Department', sortable: true },
+          { field: 'status', headerName: 'Status', sortable: true },
+          { field: 'performance', headerName: 'Performance', sortable: true },
+        ],
+        showSearch: true,
+        showFilters: true,
+        showActions: true,
+        showPagination: true,
+      },
+      DashboardDataTableCardDemo: {}, // This component renders its own demo
+      TestPage: {}, // This component renders its own demo
     };
 
     return (

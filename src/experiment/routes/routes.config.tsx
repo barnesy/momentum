@@ -39,6 +39,7 @@ const BudgetingDashboard = lazy(() => import('../components/rejected/Budgeting/B
 const BudgetCategoryCardPreview = lazy(() => import('../components/approved/BudgetCategoryCardPreview').then(m => ({ default: m.BudgetCategoryCardPreview })));
 const TailwindTest = lazy(() => import('../components/Features/TailwindTest/TailwindTest').then(m => ({ default: m.TailwindTest })));
 const Onboarding = lazy(() => import('../components/Features/Onboarding/Onboarding').then(m => ({ default: m.Onboarding })));
+const DataTableTest = lazy(() => import('../components/pending/TestPage').then(m => ({ default: m.default })));
 
 export interface RouteConfig {
   id: string;
@@ -72,6 +73,7 @@ export const ROUTE_PATHS = {
   BUDGETING: '/budgeting',
   BUDGET_CATEGORY_PREVIEW: '/budget-category-preview',
   TAILWIND_TEST: '/tailwind-test',
+  DATATABLE_TEST: '/datatable-test',
   NOT_FOUND: '/404',
 } as const;
 
@@ -179,7 +181,7 @@ export const routes: RouteConfig[] = [
     id: 'budgeting',
     path: ROUTE_PATHS.BUDGETING,
     label: 'Budgeting Dashboard',
-    icon: () => createElement(AccountBalanceIcon),
+    icon: <AccountBalanceIcon />,
     component: BudgetingDashboard,
     section: 'Demonstrations',
     description: 'Budget tracking demonstration',
@@ -189,7 +191,7 @@ export const routes: RouteConfig[] = [
     id: 'budget-category-preview',
     path: ROUTE_PATHS.BUDGET_CATEGORY_PREVIEW,
     label: 'BudgetCategoryCard Preview',
-    icon: () => createElement(AccountBalanceIcon),
+    icon: <AccountBalanceIcon />,
     component: BudgetCategoryCardPreview,
     section: 'Demonstrations',
     description: 'Budget category card component preview',
@@ -203,6 +205,15 @@ export const routes: RouteConfig[] = [
     section: 'Demonstrations',
     description: 'Tailwind CSS integration test',
     isHidden: true,
+  },
+  {
+    id: 'datatable-test',
+    path: ROUTE_PATHS.DATATABLE_TEST,
+    label: 'DataTable Test',
+    icon: <DataObjectIcon />,
+    component: DataTableTest,
+    section: 'Demonstrations',
+    description: 'Test the Dashboard DataTable Card component',
   },
 ];
 
