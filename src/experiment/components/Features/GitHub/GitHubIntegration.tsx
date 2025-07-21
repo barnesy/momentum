@@ -24,7 +24,7 @@ export const GitHubIntegration: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={3}>
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Card>
             <CardContent>
               <Typography variant="h5" gutterBottom>

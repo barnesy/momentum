@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dynamic Component Renderer</title>
+</head>
+<body>
+    <h1>Test Dynamic Component Renderer</h1>
+    <button onclick="testRenderer()">Test Component Rendering</button>
+    <pre id="result"></pre>
+
+    <script>
+        function testRenderer() {
+            const resultEl = document.getElementById('result');
+            
+            const testCode = `
+interface PageHeaderProps {
+  title: string;
+  subtitle?: string;
+  breadcrumbs?: Array<{ label: string; href?: string }>;
+  actions?: React.ReactNode;
+  onBack?: () => void;
+  status?: 'draft' | 'published' | 'archived';
+}
+
+export const PageHeader: React.FC<PageHeaderProps> = ({
+  title,
+  subtitle,
+  breadcrumbs,
+  actions,
+  onBack,
+  status
+}) => {
+  return (
+    <Box sx={{ mb: 4 }}>
+      <Typography variant="h4">{title}</Typography>
+      {subtitle && <Typography variant="body1">{subtitle}</Typography>}
+    </Box>
+  );
+};`;
+
+            // Test the regex replacements
+            let cleanedCode = testCode
+                .replace(/import\s+.*?from\s+['"].*?['"];?\s*/g, '') // Remove imports
+                .replace(/export\s+default\s+/g, 'export const '); // Convert default exports
+            
+            // Remove interface blocks
+            cleanedCode = cleanedCode.replace(/interface\s+\w+\s*{[^}]*}\s*\n?/gs, '');
+            
+            // Remove type aliases
+            cleanedCode = cleanedCode.replace(/type\s+\w+\s*=\s*[^;]+;\s*\n?/g, '');
+            
+            // Remove React.FC type but keep the arrow function
+            cleanedCode = cleanedCode.replace(/:\s*React\.FC<[^>]+>\s*=/g, ' =');
+            cleanedCode = cleanedCode.replace(/:\s*React\.FC\s*=/g, ' =');
+            
+            // Remove parameter type annotations but keep the parameters
+            cleanedCode = cleanedCode.replace(/(\w+)\s*:\s*[^,)=]+([,)])/g, '$1$2');
+            
+            // Remove return type annotations
+            cleanedCode = cleanedCode.replace(/\)\s*:\s*[^{]+{/g, ') {');
+            
+            cleanedCode = cleanedCode.trim();
+
+            resultEl.textContent = 'Original:\n' + testCode + '\n\nCleaned:\n' + cleanedCode;
+        }
+    </script>
+</body>
+</html>

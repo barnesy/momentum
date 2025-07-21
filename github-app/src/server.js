@@ -9,6 +9,7 @@ import { PatternDetector } from './pattern-detector.js';
 import { DecisionTracker } from './decision-tracker.js';
 import { messageTracer } from './message-tracer.js';
 import { codexService } from './codex-service.js';
+import ClaudeCodeHandler from './claude-code-handler.js';
 
 config();
 
@@ -389,6 +390,44 @@ async function handleErrorReport(req, res) {
   });
 }
 
+// Handle Claude Code API requests
+async function handleClaudeCodeRequest(req, res) {
+  let body = '';
+  req.on('data', chunk => body += chunk);
+  req.on('end', async () => {
+    try {
+      const data = JSON.parse(body);
+      console.log('Claude Code request:', data);
+      
+      // Initialize handler
+      const claudeHandler = new ClaudeCodeHandler();
+      
+      // Process based on request type
+      let result;
+      if (data.type === 'component_generation') {
+        result = await claudeHandler.handleComponentGeneration(data.prompt);
+      } else {
+        result = { error: 'Unknown request type' };
+      }
+      
+      // Track metrics
+      metricsTracker.record({
+        event: 'claude-code-request',
+        type: data.type,
+        success: !result.error,
+        timestamp: Date.now()
+      });
+      
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(result));
+    } catch (error) {
+      console.error('Claude Code request error:', error);
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: error.message }));
+    }
+  });
+}
+
 // Handle GitHub webhook events
 const webhooks = new Webhooks({
   secret: process.env.WEBHOOK_SECRET
@@ -598,6 +637,12 @@ const server = http.createServer((req, res) => {
   // Error report endpoint
   if (req.url === '/error/report' && req.method === 'POST') {
     handleErrorReport(req, res);
+    return;
+  }
+  
+  // Claude Code API endpoint for component generation
+  if (req.url === '/api/claude-code' && req.method === 'POST') {
+    handleClaudeCodeRequest(req, res);
     return;
   }
   

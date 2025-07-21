@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Component Generator API</title>
+</head>
+<body>
+    <h1>Test Component Generator API</h1>
+    <button onclick="testAPI()">Test Claude Code API</button>
+    <pre id="result"></pre>
+
+    <script>
+        async function testAPI() {
+            const resultEl = document.getElementById('result');
+            resultEl.textContent = 'Testing API...';
+
+            try {
+                const response = await fetch('http://localhost:3000/api/claude-code', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: `Generate a React component with Material-UI based on this description: "User profile card with avatar, name, role, email, and status badge"
+
+Requirements:
+1. Use TypeScript and Material-UI (MUI) components
+2. Create a functional component with proper TypeScript types
+3. Include at least 3-4 variations showing different states or configurations
+4. Make the component reusable with customizable props
+5. Use modern React patterns (hooks, functional components)
+
+Return the response in this exact JSON format:
+{
+  "component": {
+    "name": "ComponentName",
+    "description": "Brief description of the component",
+    "code": "// Full TypeScript component code here",
+    "defaultProps": {
+      "prop1": "value1",
+      "prop2": "value2"
+    },
+    "variations": [
+      {
+        "id": "var1",
+        "name": "Default",
+        "props": { "prop1": "value1" },
+        "description": "Default state"
+      },
+      {
+        "id": "var2", 
+        "name": "Loading",
+        "props": { "loading": true },
+        "description": "Loading state"
+      }
+    ]
+  }
+}`,
+                        type: 'component_generation'
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                resultEl.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultEl.textContent = `Error: ${error.message}`;
+                console.error('API test error:', error);
+            }
+        }
+    </script>
+</body>
+</html>

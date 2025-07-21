@@ -9,6 +9,7 @@ import {
   Typography,
   Box,
   Toolbar,
+  Chip,
 } from '@mui/material';
 import {
   Storage as StorageIcon,
@@ -24,6 +25,10 @@ import {
   BugReport as BugReportIcon,
   Widgets as WidgetsIcon,
   Palette as PaletteIcon,
+  Texture as TextureIcon,
+  CollectionsBookmark as CollectionsBookmarkIcon,
+  DataObject as DataObjectIcon,
+  AccountBalance as AccountBalanceIcon,
 } from '@mui/icons-material';
 
 export interface NavigationItem {
@@ -31,6 +36,8 @@ export interface NavigationItem {
   label: string;
   icon: React.ReactElement;
   section: string;
+  isPending?: boolean;
+  isRejected?: boolean;
 }
 
 interface NavigationProps {
@@ -55,6 +62,11 @@ const navigationItems: NavigationItem[] = [
   { id: 'errors', label: 'Error Testing', icon: <BugReportIcon />, section: 'Monitoring & Testing' },
   { id: 'mui', label: 'MUI Detection', icon: <WidgetsIcon />, section: 'Monitoring & Testing' },
   { id: 'theme-editor', label: 'Theme Editor', icon: <PaletteIcon />, section: 'Customization' },
+  { id: 'component-generator', label: 'Component Generator', icon: <TextureIcon />, section: 'Customization' },
+  { id: 'pattern-catalog', label: 'Pattern Catalog', icon: <CollectionsBookmarkIcon />, section: 'Customization' },
+  { id: 'dbml-editor', label: 'DBML Asset Generator', icon: <DataObjectIcon />, section: 'Customization' },
+  { id: 'budgeting', label: 'Budgeting Dashboard', icon: <AccountBalanceIcon />, section: 'Demonstrations', isRejected: true },
+  { id: 'budget-category-preview', label: 'BudgetCategoryCard Preview', icon: <AccountBalanceIcon />, section: 'Demonstrations' },
 ];
 
 export const Navigation: React.FC<NavigationProps> = ({
@@ -66,7 +78,7 @@ export const Navigation: React.FC<NavigationProps> = ({
 }) => {
   const drawerWidth = 280;
   
-  const sections = ['Core Features', 'Visualizations', 'Monitoring & Testing', 'Customization'];
+  const sections = ['Core Features', 'Visualizations', 'Monitoring & Testing', 'Customization', 'Demonstrations'];
 
   return (
     <Drawer
@@ -102,7 +114,27 @@ export const Navigation: React.FC<NavigationProps> = ({
                       onClick={() => onTabChange(item.id)}
                     >
                       <ListItemIcon>{item.icon}</ListItemIcon>
-                      <ListItemText primary={item.label} />
+                      <ListItemText 
+                        primary={
+                          <Box display="flex" alignItems="center" gap={1}>
+                            {item.label}
+                            {item.isPending && (
+                              <Chip 
+                                label="Pending Review" 
+                                size="small" 
+                                color="warning" 
+                              />
+                            )}
+                            {item.isRejected && (
+                              <Chip 
+                                label="Rejected" 
+                                size="small" 
+                                color="error" 
+                              />
+                            )}
+                          </Box>
+                        }
+                      />
                     </ListItemButton>
                   </ListItem>
                 ))}

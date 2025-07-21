@@ -32,6 +32,11 @@ import { ThemeEditor } from '../Features/ThemeEditor/ThemeEditor';
 import { AIIntegration } from '../Features/AI/AIIntegration';
 import { GitHubIntegration } from '../Features/GitHub/GitHubIntegration';
 import { Performance } from '../Features/Performance/Performance';
+import { ComponentGenerator } from '../Features/ComponentGenerator/ComponentGenerator';
+import { PatternCatalog } from '../Features/PatternCatalog/PatternCatalog';
+import { DBMLEditor } from '../Features/DBMLEditor/DBMLEditor';
+import { BudgetingDashboard } from '../rejected/Budgeting/BudgetingDashboard';
+import { BudgetCategoryCardPreview } from '../approved/BudgetCategoryCardPreview';
 
 export const AppLayout: React.FC = () => {
   const theme = useTheme();
@@ -65,6 +70,18 @@ export const AppLayout: React.FC = () => {
         return <Performance />;
       case 'theme-editor':
         return <ThemeEditor />;
+      case 'component-generator':
+        return <ComponentGenerator />;
+      case 'pattern-generator':
+        return <ComponentGenerator />; // Backwards compatibility
+      case 'pattern-catalog':
+        return <PatternCatalog />;
+      case 'dbml-editor':
+        return <DBMLEditor />;
+      case 'budgeting':
+        return <BudgetingDashboard />;
+      case 'budget-category-preview':
+        return <BudgetCategoryCardPreview />;
       default:
         return (
           <Box sx={{ p: 3 }}>

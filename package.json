@@ -15,7 +15,10 @@
     "stop:system": "cd scripts && ./stop-system.sh",
     "server:dev": "cd github-app && npm run dev",
     "server:start": "cd github-app && npm start",
-    "clean": "rm -rf node_modules dist .vite"
+    "clean": "rm -rf node_modules dist .vite",
+    "test:e2e": "node tests/momentum-e2e.test.js",
+    "test:e2e:watch": "nodemon --watch tests --watch src tests/momentum-e2e.test.js",
+    "test:visual": "node tests/simple-puppeteer-demo.js"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -38,6 +41,7 @@
     "eslint": "^9.0.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
+    "puppeteer": "^24.14.0",
     "typescript": "^5.3.3",
     "vite": "^7.0.5"
   }

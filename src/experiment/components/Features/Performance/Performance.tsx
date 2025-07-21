@@ -31,7 +31,7 @@ export const Performance: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={3}>
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Card>
             <CardContent>
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
@@ -51,7 +51,7 @@ export const Performance: React.FC = () => {
               </Box>
               <Grid container spacing={2}>
                 {metrics.map((metric, index) => (
-                  <Grid item xs={12} sm={6} md={3} key={index}>
+                  <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
                     <Paper variant="outlined" sx={{ p: 2, textAlign: 'center' }}>
                       <Typography variant="h4" color="primary">
                         {metric.value}

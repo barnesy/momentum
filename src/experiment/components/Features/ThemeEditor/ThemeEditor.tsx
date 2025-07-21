@@ -58,6 +58,18 @@ export const ThemeEditor: React.FC = () => {
     }
   };
 
+  const getColorDescription = (color: string): string => {
+    const descriptions: Record<string, string> = {
+      primary: 'Main brand color for primary actions',
+      secondary: 'Accent color for secondary actions',
+      error: 'Color for error states and messages',
+      warning: 'Color for warning alerts',
+      info: 'Color for informational messages',
+      success: 'Color for success states',
+    };
+    return descriptions[color] || `Theme ${color} color`;
+  };
+
   const handleTypographyChange = (field: keyof ThemeConfig['typography'], value: string | number) => {
     updateTheme({
       typography: {
@@ -93,7 +105,7 @@ export const ThemeEditor: React.FC = () => {
     <Box>
       <Grid container spacing={3}>
         {/* Left Panel - Editor */}
-        <Grid item xs={12} lg={7}>
+        <Grid size={{ xs: 12, lg: 7 }}>
           <Stack spacing={2}>
             {/* Mode Toggle */}
             <Card>
@@ -147,18 +159,41 @@ export const ThemeEditor: React.FC = () => {
                   </IconButton>
                 </Box>
                 <Collapse in={expandedSection === 'palette'}>
-                  <Grid container spacing={2}>
+                  <Grid container spacing={3}>
                     {(['primary', 'secondary', 'error', 'warning', 'info', 'success'] as const).map((color) => (
-                      <Grid item xs={12} sm={6} key={color}>
+                      <Grid size={{ xs: 12, md: 6 }} key={color}>
                         <ColorPicker
                           label={color.charAt(0).toUpperCase() + color.slice(1)}
                           value={themeConfig.palette[color] as string}
                           onChange={(value) => handleColorChange(color, value)}
-                          helperText={`${color} color`}
+                          helperText={getColorDescription(color)}
                         />
                       </Grid>
                     ))}
                   </Grid>
+                  
+                  <Box mt={3} p={2} bgcolor="background.paper" borderRadius={2}>
+                    <Typography variant="subtitle2" gutterBottom>Preview</Typography>
+                    <Grid container spacing={2}>
+                      {(['primary', 'secondary', 'error', 'warning', 'info', 'success'] as const).map((color) => (
+                        <Grid key={color}>
+                          <Box textAlign="center">
+                            <Box
+                              sx={{
+                                width: 60,
+                                height: 60,
+                                backgroundColor: `${color}.main`,
+                                borderRadius: 2,
+                                mb: 1,
+                                boxShadow: 1,
+                              }}
+                            />
+                            <Typography variant="caption">{color}</Typography>
+                          </Box>
+                        </Grid>
+                      ))}
+                    </Grid>
+                  </Box>
                 </Collapse>
               </CardContent>
             </Card>
@@ -198,13 +233,24 @@ export const ThemeEditor: React.FC = () => {
                       <Typography variant="body2" gutterBottom sx={{ fontWeight: 500 }}>
                         Font Sizes
                       </Typography>
-                      <Grid container spacing={2}>
+                      <Grid container spacing={3}>
                         {(['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'body1', 'body2'] as const).map((variant) => (
-                          <Grid item xs={6} sm={3} key={variant}>
-                            <Box>
-                              <Typography variant="caption" color="text.secondary">
-                                {variant.toUpperCase()}
-                              </Typography>
+                          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={variant}>
+                            <Box sx={{ 
+                              p: 2, 
+                              border: 1, 
+                              borderColor: 'divider', 
+                              borderRadius: 1,
+                              backgroundColor: 'background.paper'
+                            }}>
+                              <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                                <Typography variant="caption" color="text.secondary" fontWeight={600}>
+                                  {variant.toUpperCase()}
+                                </Typography>
+                                <Typography variant="caption" color="primary">
+                                  {(themeConfig.typography[`${variant}Size` as keyof ThemeConfig['typography']] as number).toFixed(1)}rem
+                                </Typography>
+                              </Box>
                               <Slider
                                 value={themeConfig.typography[`${variant}Size` as keyof ThemeConfig['typography']] as number}
                                 onChange={(_, value) => handleTypographyChange(`${variant}Size` as keyof ThemeConfig['typography'], value as number)}
@@ -213,7 +259,36 @@ export const ThemeEditor: React.FC = () => {
                                 step={0.1}
                                 valueLabelDisplay="auto"
                                 size="small"
+                                sx={{
+                                  '& .MuiSlider-thumb': {
+                                    width: 16,
+                                    height: 16,
+                                  },
+                                  '& .MuiSlider-valueLabel': {
+                                    fontSize: 12,
+                                    background: 'rgba(0, 0, 0, 0.8)',
+                                  }
+                                }}
                               />
+                              <Typography 
+                                variant={variant as any} 
+                                sx={{ 
+                                  mt: 1, 
+                                  fontSize: `${themeConfig.typography[`${variant}Size` as keyof ThemeConfig['typography']]}rem`,
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap'
+                                }}
+                              >
+                                {variant === 'h1' ? 'Heading 1' :
+                                 variant === 'h2' ? 'Heading 2' :
+                                 variant === 'h3' ? 'Heading 3' :
+                                 variant === 'h4' ? 'Heading 4' :
+                                 variant === 'h5' ? 'Heading 5' :
+                                 variant === 'h6' ? 'Heading 6' :
+                                 variant === 'body1' ? 'Body Text' :
+                                 'Small Text'}
+                              </Typography>
                             </Box>
                           </Grid>
                         ))}
@@ -317,7 +392,7 @@ export const ThemeEditor: React.FC = () => {
         </Grid>
 
         {/* Right Panel - Live Preview */}
-        <Grid item xs={12} lg={5}>
+        <Grid size={{ xs: 12, lg: 5 }}>
           <LivePreview />
         </Grid>
       </Grid>
