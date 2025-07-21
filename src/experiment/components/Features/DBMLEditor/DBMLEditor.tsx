@@ -86,7 +86,7 @@ Table components {
 
 Table component_reviews {
   id int [pk, increment]
-  component_id int [ref: > components.id, not null]
+  component_id int [ref: > components.id [delete: cascade], not null]
   reviewer_id int [ref: > users.id, not null]
   status review_status [not null]
   feedback text
@@ -185,14 +185,7 @@ Enum user_role {
   viewer
 }
 
-// Table relationships documented
-Ref: component_reviews.component_id > components.id [delete: cascade]
-Ref: component_reviews.reviewer_id > users.id
-Ref: themes.created_by > users.id
-Ref: components.created_by > users.id
-Ref: github_connections.user_id - users.id
-Ref: ai_interactions.user_id > users.id
-Ref: ai_interactions.component_id > components.id`;
+// Note: Relationships are defined inline within table definitions above`;
 
 interface ParsedSchema {
   tables: any[];
