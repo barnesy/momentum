@@ -35,7 +35,7 @@
   margin: 0 8px;
 }
 
-.lc-minimize {
+.lc-minimize, .lc-diagnostic {
   background: none;
   border: none;
   color: #8b949e;
@@ -44,8 +44,12 @@
   font-size: 14px;
 }
 
-.lc-minimize:hover {
+.lc-minimize:hover, .lc-diagnostic:hover {
   color: #c9d1d9;
+}
+
+.lc-diagnostic {
+  font-size: 12px;
 }
 
 .lc-content {

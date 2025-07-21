@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Error Reporter</title>
+</head>
+<body>
+    <h1>Error Reporter Test</h1>
+    <button id="testError">Trigger Test Error</button>
+    <button id="testWebSocket">Test Direct WebSocket</button>
+    <pre id="output"></pre>
+
+    <script>
+        const output = document.getElementById('output');
+        
+        // Test direct WebSocket connection
+        document.getElementById('testWebSocket').addEventListener('click', () => {
+            const ws = new WebSocket('ws://localhost:8766');
+            
+            ws.onopen = () => {
+                output.textContent += 'WebSocket connected!\n';
+                
+                // Send test error
+                ws.send(JSON.stringify({
+                    type: 'browser-error',
+                    error: {
+                        message: 'Test error from HTML page',
+                        source: 'test',
+                        timestamp: Date.now()
+                    },
+                    url: window.location.href,
+                    userAgent: navigator.userAgent,
+                    timestamp: Date.now()
+                }));
+                
+                output.textContent += 'Error sent!\n';
+            };
+            
+            ws.onerror = (error) => {
+                output.textContent += 'WebSocket error: ' + error + '\n';
+            };
+            
+            ws.onclose = () => {
+                output.textContent += 'WebSocket closed\n';
+            };
+        });
+        
+        // Test throwing error
+        document.getElementById('testError').addEventListener('click', () => {
+            throw new Error('Test error - should be caught by error monitor');
+        });
+    </script>
+</body>
+</html>

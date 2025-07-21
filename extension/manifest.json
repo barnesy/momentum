@@ -1,37 +1,41 @@
 {
   "manifest_version": 3,
-  "name": "Dev Context Intelligence",
-  "version": "1.0.0",
-  "description": "Enhanced context awareness and code intelligence for web development",
+  "name": "Momentum Vision",
+  "version": "2.0.0",
+  "description": "See your development momentum in real-time",
   "permissions": [
     "storage",
     "tabs",
-    "webNavigation",
-    "scripting"
+    "webRequest",
+    "alarms"
   ],
   "host_permissions": [
-    "http://localhost/*",
-    "https://localhost/*",
-    "http://127.0.0.1/*"
+    "https://github.com/*",
+    "http://localhost:8000/*",
+    "http://localhost:3000/*",
+    "wss://*.workers.dev/*",
+    "wss://*.fly.dev/*",
+    "http://localhost:8765/*",
+    "ws://localhost:8765/*",
+    "http://localhost:8766/*",
+    "ws://localhost:8766/*"
   ],
   "background": {
-    "service_worker": "background.js",
+    "service_worker": "background-v3.js",
     "type": "module"
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["https://github.com/*", "http://localhost:8000/*"],
       "js": ["content.js"],
-      "run_at": "document_start"
+      "css": ["styles.css"],
+      "run_at": "document_end"
     }
   ],
-  "action": {
-    "default_popup": "popup.html"
-  },
   "web_accessible_resources": [
     {
-      "resources": ["inject.js"],
-      "matches": ["<all_urls>"]
+      "resources": ["error-monitor.js", "prompt-panel.js", "autonomous-fix-engine.js", "mui-detector.js", "diagnostic.js", "codex-integration.js"],
+      "matches": ["https://github.com/*", "http://localhost:8000/*"]
     }
   ]
 }
