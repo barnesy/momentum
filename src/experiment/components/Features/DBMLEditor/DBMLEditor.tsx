@@ -476,7 +476,7 @@ export const DBMLEditor: React.FC = () => {
             {parsedSchema ? (
               <Grid container spacing={3}>
                 {/* Tables */}
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <Typography variant="h6" gutterBottom>
                     Tables ({parsedSchema.tables.length})
                   </Typography>
@@ -510,7 +510,7 @@ export const DBMLEditor: React.FC = () => {
                 </Grid>
 
                 {/* Enums and Relationships */}
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   {/* Enums */}
                   {parsedSchema.enums.length > 0 && (
                     <>
@@ -643,7 +643,7 @@ export const DBMLEditor: React.FC = () => {
                   Schema Statistics
                 </Typography>
                 <Grid container spacing={2}>
-                  <Grid item xs={6} sm={3}>
+                  <Grid size={{ xs: 6, sm: 3 }}>
                     <Paper sx={{ p: 2, textAlign: 'center' }}>
                       <Typography variant="h4" color="primary">
                         {parsedSchema.tables.length}
@@ -653,7 +653,7 @@ export const DBMLEditor: React.FC = () => {
                       </Typography>
                     </Paper>
                   </Grid>
-                  <Grid item xs={6} sm={3}>
+                  <Grid size={{ xs: 6, sm: 3 }}>
                     <Paper sx={{ p: 2, textAlign: 'center' }}>
                       <Typography variant="h4" color="primary">
                         {parsedSchema.tables.reduce((acc, table) => acc + table.fields.length, 0)}
@@ -663,7 +663,7 @@ export const DBMLEditor: React.FC = () => {
                       </Typography>
                     </Paper>
                   </Grid>
-                  <Grid item xs={6} sm={3}>
+                  <Grid size={{ xs: 6, sm: 3 }}>
                     <Paper sx={{ p: 2, textAlign: 'center' }}>
                       <Typography variant="h4" color="primary">
                         {parsedSchema.refs.length}
@@ -673,7 +673,7 @@ export const DBMLEditor: React.FC = () => {
                       </Typography>
                     </Paper>
                   </Grid>
-                  <Grid item xs={6} sm={3}>
+                  <Grid size={{ xs: 6, sm: 3 }}>
                     <Paper sx={{ p: 2, textAlign: 'center' }}>
                       <Typography variant="h4" color="primary">
                         {parsedSchema.enums.length}
@@ -691,7 +691,7 @@ export const DBMLEditor: React.FC = () => {
           {/* Documentation Tab */}
           <TabPanel value={tabValue} index={3}>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Paper sx={{ p: 3 }}>
                   <Box display="flex" alignItems="center" gap={1} mb={2}>
                     <DocsIcon color="primary" />
@@ -746,7 +746,7 @@ export const DBMLEditor: React.FC = () => {
                 </Paper>
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Paper sx={{ p: 3 }}>
                   <Box display="flex" alignItems="center" gap={1} mb={2}>
                     <TerminalIcon color="primary" />
