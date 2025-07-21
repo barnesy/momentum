@@ -400,5 +400,3 @@ export const ComponentGenerator: React.FC = () => {
     </Box>
   );
 };
-
-export { ComponentGenerator };
