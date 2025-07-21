@@ -50,7 +50,7 @@ import {
 import Editor from '@monaco-editor/react';
 import { Parser, exporter } from '@dbml/core';
 import mermaid from 'mermaid';
-import { dbmlToMermaid } from '../../utils/dbmlToMermaid';
+import { dbmlToMermaid } from '../../../utils/dbmlToMermaid';
 
 interface TabPanelProps {
   children?: React.ReactNode;
