@@ -24,6 +24,11 @@ import {
   FormControl,
   InputLabel,
   Snackbar,
+  TextField,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
 } from '@mui/material';
 import {
   Schema as SchemaIcon,
@@ -37,6 +42,10 @@ import {
   Code as CodeIcon,
   TableChart as TableIcon,
   AccountTree as DiagramIcon,
+  Book as DocsIcon,
+  Terminal as TerminalIcon,
+  CloudUpload as PublishIcon,
+  Link as LinkIcon,
 } from '@mui/icons-material';
 import Editor from '@monaco-editor/react';
 import { Parser, exporter } from '@dbml/core';
@@ -203,8 +212,10 @@ export const DBMLEditor: React.FC = () => {
   const [exportFormat, setExportFormat] = useState<'postgres' | 'mysql' | 'mssql'>('postgres');
   const [exportedSQL, setExportedSQL] = useState<string>('');
   const [showExportDialog, setShowExportDialog] = useState(false);
+  const [showDbdocsDialog, setShowDbdocsDialog] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
   const [syntaxReferenceOpen, setSyntaxReferenceOpen] = useState(false);
+  const [projectName, setProjectName] = useState('momentum-db');
 
   // Parse DBML schema
   const parseDBML = useCallback((schema: string) => {
@@ -344,6 +355,15 @@ export const DBMLEditor: React.FC = () => {
                 Save
               </Button>
               <Button
+                variant="outlined"
+                size="small"
+                startIcon={<DocsIcon />}
+                onClick={() => setShowDbdocsDialog(true)}
+                disabled={!parsedSchema}
+              >
+                dbdocs.io
+              </Button>
+              <Button
                 variant="contained"
                 startIcon={<CodeIcon />}
                 onClick={exportToSQL}
@@ -363,6 +383,7 @@ export const DBMLEditor: React.FC = () => {
             <Tab label="Schema Editor" icon={<CodeIcon />} iconPosition="start" />
             <Tab label="Schema Overview" icon={<TableIcon />} iconPosition="start" />
             <Tab label="Visual Diagram" icon={<DiagramIcon />} iconPosition="start" />
+            <Tab label="Documentation" icon={<DocsIcon />} iconPosition="start" />
           </Tabs>
 
           <Divider />
@@ -581,6 +602,109 @@ export const DBMLEditor: React.FC = () => {
               </Box>
             )}
           </TabPanel>
+
+          {/* Documentation Tab */}
+          <TabPanel value={tabValue} index={3}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <Paper sx={{ p: 3 }}>
+                  <Box display="flex" alignItems="center" gap={1} mb={2}>
+                    <DocsIcon color="primary" />
+                    <Typography variant="h6">
+                      Generate Documentation with dbdocs.io
+                    </Typography>
+                  </Box>
+                  
+                  <Typography variant="body2" paragraph>
+                    dbdocs.io creates beautiful, shareable database documentation from your DBML schema.
+                  </Typography>
+
+                  <List>
+                    <ListItem>
+                      <ListItemIcon>
+                        <CheckIcon color="success" />
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary="Auto-generated documentation"
+                        secondary="Clean interface to visualize your database"
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <CheckIcon color="success" />
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary="Shareable links"
+                        secondary="Share with team members and stakeholders"
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <CheckIcon color="success" />
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary="Version control"
+                        secondary="Track database schema changes over time"
+                      />
+                    </ListItem>
+                  </List>
+
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    startIcon={<PublishIcon />}
+                    onClick={() => setShowDbdocsDialog(true)}
+                    sx={{ mt: 2 }}
+                  >
+                    Publish to dbdocs.io
+                  </Button>
+                </Paper>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Paper sx={{ p: 3 }}>
+                  <Box display="flex" alignItems="center" gap={1} mb={2}>
+                    <TerminalIcon color="primary" />
+                    <Typography variant="h6">
+                      CLI Setup Guide
+                    </Typography>
+                  </Box>
+
+                  <Typography variant="body2" paragraph>
+                    Install and use dbdocs CLI for automated documentation:
+                  </Typography>
+
+                  <Typography variant="subtitle2" gutterBottom>
+                    1. Install dbdocs CLI:
+                  </Typography>
+                  <Paper variant="outlined" sx={{ p: 1, mb: 2, bgcolor: 'grey.900' }}>
+                    <code style={{ color: '#fff' }}>npm install -g dbdocs</code>
+                  </Paper>
+
+                  <Typography variant="subtitle2" gutterBottom>
+                    2. Login to dbdocs:
+                  </Typography>
+                  <Paper variant="outlined" sx={{ p: 1, mb: 2, bgcolor: 'grey.900' }}>
+                    <code style={{ color: '#fff' }}>dbdocs login</code>
+                  </Paper>
+
+                  <Typography variant="subtitle2" gutterBottom>
+                    3. Build documentation:
+                  </Typography>
+                  <Paper variant="outlined" sx={{ p: 1, mb: 2, bgcolor: 'grey.900' }}>
+                    <code style={{ color: '#fff' }}>dbdocs build database.dbml</code>
+                  </Paper>
+
+                  <Typography variant="subtitle2" gutterBottom>
+                    4. CI/CD Integration:
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Add to your Git hooks or CI pipeline to auto-update docs on schema changes.
+                  </Typography>
+                </Paper>
+              </Grid>
+            </Grid>
+          </TabPanel>
         </CardContent>
       </Card>
 
@@ -627,6 +751,75 @@ export const DBMLEditor: React.FC = () => {
           >
             Copy SQL
           </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* dbdocs.io Dialog */}
+      <Dialog
+        open={showDbdocsDialog}
+        onClose={() => setShowDbdocsDialog(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          <Box display="flex" alignItems="center" gap={1}>
+            <DocsIcon color="primary" />
+            Publish to dbdocs.io
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <Stack spacing={3}>
+            <Alert severity="info" icon={<InfoIcon />}>
+              To publish your documentation, you'll need to use the dbdocs CLI.
+            </Alert>
+
+            <TextField
+              label="Project Name"
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+              fullWidth
+              helperText="This will be your dbdocs URL: dbdocs.io/username/project-name"
+            />
+
+            <Box>
+              <Typography variant="subtitle2" gutterBottom>
+                Quick Steps:
+              </Typography>
+              <Paper variant="outlined" sx={{ p: 2, bgcolor: 'grey.50' }}>
+                <Typography variant="body2" component="div">
+                  1. Save your DBML file locally<br />
+                  2. Run: <code style={{ backgroundColor: '#e8e8e8', padding: '2px 4px' }}>dbdocs build database.dbml --project {projectName}</code><br />
+                  3. Your docs will be available at the provided URL
+                </Typography>
+              </Paper>
+            </Box>
+
+            <Box display="flex" gap={2}>
+              <Button
+                variant="outlined"
+                startIcon={<DownloadIcon />}
+                onClick={() => {
+                  downloadSchema();
+                  setSnackbarMessage('Schema downloaded as database.dbml');
+                }}
+                fullWidth
+              >
+                Download DBML
+              </Button>
+              <Button
+                variant="outlined"
+                startIcon={<LinkIcon />}
+                href="https://dbdocs.io"
+                target="_blank"
+                fullWidth
+              >
+                Visit dbdocs.io
+              </Button>
+            </Box>
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowDbdocsDialog(false)}>Close</Button>
         </DialogActions>
       </Dialog>
 
