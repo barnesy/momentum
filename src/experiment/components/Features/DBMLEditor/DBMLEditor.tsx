@@ -49,7 +49,8 @@ import {
 } from '@mui/icons-material';
 import Editor from '@monaco-editor/react';
 import { Parser, exporter } from '@dbml/core';
-import { run as renderDiagram } from '@softwaretechnik/dbml-renderer/lib/api';
+import mermaid from 'mermaid';
+import { dbmlToMermaid } from '../../utils/dbmlToMermaid';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -226,6 +227,7 @@ export const DBMLEditor: React.FC = () => {
   const [projectName, setProjectName] = useState('momentum-db');
   const [diagramSVG, setDiagramSVG] = useState<string | null>(null);
   const [diagramError, setDiagramError] = useState<string | null>(null);
+  const [mermaidId] = useState(`mermaid-${Date.now()}`);
 
   // Parse DBML schema
   const parseDBML = useCallback((schema: string) => {
@@ -256,23 +258,51 @@ export const DBMLEditor: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, [dbml, parseDBML]);
 
+  // Initialize Mermaid
+  useEffect(() => {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'default',
+      themeVariables: {
+        primaryColor: '#1976d2',
+        primaryTextColor: '#fff',
+        primaryBorderColor: '#0d47a1',
+        lineColor: '#333',
+        secondaryColor: '#f50057',
+        tertiaryColor: '#fff'
+      },
+      er: {
+        diagramPadding: 20,
+        layoutDirection: 'TB',
+        minEntityWidth: 100,
+        minEntityHeight: 75,
+        entityPadding: 15,
+        stroke: 'gray',
+        fill: '#f9f9f9'
+      }
+    });
+  }, []);
+
   // Generate diagram when DBML changes
-  const generateDiagram = useCallback(() => {
+  const generateDiagram = useCallback(async () => {
     if (!dbml) {
       setDiagramSVG(null);
       return;
     }
 
     try {
-      // Generate SVG diagram
-      const svg = renderDiagram(dbml, 'svg');
+      // Convert DBML to Mermaid syntax
+      const mermaidSyntax = dbmlToMermaid(dbml);
+      
+      // Render the diagram
+      const { svg } = await mermaid.render(mermaidId, mermaidSyntax);
       setDiagramSVG(svg);
       setDiagramError(null);
     } catch (error: any) {
       setDiagramError(error.message || 'Failed to generate diagram');
       setDiagramSVG(null);
     }
-  }, [dbml]);
+  }, [dbml, mermaidId]);
 
   // Auto-generate diagram on change
   useEffect(() => {
@@ -585,6 +615,22 @@ export const DBMLEditor: React.FC = () => {
                 <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                   <Typography variant="h6">Database Schema Diagram</Typography>
                   <Stack direction="row" spacing={1}>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      startIcon={<CodeIcon />}
+                      onClick={() => {
+                        try {
+                          const mermaidSyntax = dbmlToMermaid(dbml);
+                          copyToClipboard(mermaidSyntax);
+                          setSnackbarMessage('Mermaid syntax copied to clipboard');
+                        } catch (error: any) {
+                          setSnackbarMessage('Failed to generate Mermaid syntax');
+                        }
+                      }}
+                    >
+                      Copy Mermaid
+                    </Button>
                     <Button
                       size="small"
                       variant="outlined"
