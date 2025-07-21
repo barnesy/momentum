@@ -79,7 +79,7 @@ export const Navigation: React.FC<NavigationProps> = ({
                   }}
                 >
                   <ListItemIcon sx={{ minWidth: 40 }}>
-                    {route.icon()}
+                    {route.icon}
                   </ListItemIcon>
                   <ListItemText 
                     primary={route.label}

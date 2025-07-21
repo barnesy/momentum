@@ -35,8 +35,8 @@ const ComponentGenerator = lazy(() => import('../components/Features/ComponentGe
 const PatternCatalog = lazy(() => import('../components/Features/PatternCatalog/PatternCatalog').then(m => ({ default: m.PatternCatalog })));
 const DBMLEditor = lazy(() => import('../components/Features/DBMLEditor/DBMLEditor').then(m => ({ default: m.DBMLEditor })));
 const BudgetingDashboard = lazy(() => import('../components/rejected/Budgeting/BudgetingDashboard').then(m => ({ default: m.BudgetingDashboard })));
-const BudgetCategoryCardPreview = lazy(() => import('../components/Features/BudgetCategoryCardPreview/BudgetCategoryCardPreview').then(m => ({ default: m.BudgetCategoryCardPreview })));
-const TailwindTest = lazy(() => import('../components/Features/TailwindTest/TailwindTest').then(m => ({ default: m.default })));
+const BudgetCategoryCardPreview = lazy(() => import('../components/approved/BudgetCategoryCardPreview').then(m => ({ default: m.BudgetCategoryCardPreview })));
+const TailwindTest = lazy(() => import('../components/Features/TailwindTest/TailwindTest').then(m => ({ default: m.TailwindTest })));
 
 export interface RouteConfig {
   id: string;
