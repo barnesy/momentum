@@ -37,6 +37,8 @@ momentum/
 
 ## Quick Start
 
+See [QUICKSTART.md](QUICKSTART.md) for a 2-minute setup guide!
+
 1. Install dependencies:
 ```bash
 npm install
@@ -47,6 +49,23 @@ cd github-app && npm install
 ```bash
 cp github-app/.env.example github-app/.env
 # Add your GitHub App credentials and OpenAI API key
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Please see:
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
+- [REPOSITORY_PERMISSIONS.md](docs/REPOSITORY_PERMISSIONS.md) - Fixing permission issues
+
+### Quick Contribution Setup
+```bash
+# For new contributors
+npm run setup:contributor
+
+# For pattern generation
+npm run dev:experiment
+npm run create:pattern-branch "feature/your-patterns"
+npm run submit:patterns
 ```
 
 3. Start the development server:

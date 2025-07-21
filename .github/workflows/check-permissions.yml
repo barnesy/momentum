@@ -1,0 +1,99 @@
+name: Check Contributor Permissions
+
+on:
+  pull_request:
+    types: [opened]
+  issues:
+    types: [opened]
+
+jobs:
+  welcome:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Welcome New Contributors
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const author = context.payload.pull_request?.user?.login || context.payload.issue?.user?.login;
+            
+            if (!author) return;
+            
+            // Check if first-time contributor
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner,
+              repo,
+              creator: author,
+              state: 'all'
+            });
+            
+            if (issues.length === 1) {
+              const issueNumber = context.payload.pull_request?.number || context.payload.issue?.number;
+              const isPR = !!context.payload.pull_request;
+              
+              const welcomeMessage = `
+              👋 Welcome @${author}! Thank you for your contribution to Momentum!
+              
+              ${isPR ? `
+              ### 📋 PR Checklist
+              - [ ] Read [CONTRIBUTING.md](https://github.com/${owner}/${repo}/blob/main/CONTRIBUTING.md)
+              - [ ] Followed commit message guidelines
+              - [ ] Tested changes locally
+              - [ ] Added/updated documentation if needed
+              
+              ### 🤝 Contribution Workflow
+              If you're having permission issues pushing branches:
+              1. Fork the repository
+              2. Push to your fork
+              3. Create PR from fork
+              
+              See [Repository Permissions Guide](https://github.com/${owner}/${repo}/blob/main/docs/REPOSITORY_PERMISSIONS.md) for details.
+              ` : `
+              Thank you for opening an issue! We'll review it soon.
+              
+              For contributing code, please see our [Contributing Guide](https://github.com/${owner}/${repo}/blob/main/CONTRIBUTING.md).
+              `}
+              `;
+              
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                body: welcomeMessage
+              });
+            }
+
+  check-permission:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Check Contributor Status
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const author = context.payload.pull_request.user.login;
+            
+            try {
+              // Check if user has direct access
+              const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
+                owner,
+                repo,
+                username: author
+              });
+              
+              console.log(`User ${author} has ${permission.permission} access`);
+              
+              if (permission.permission === 'read' || permission.permission === 'none') {
+                // User is using fork-based workflow
+                await github.rest.issues.createComment({
+                  owner,
+                  repo,
+                  issue_number: context.payload.pull_request.number,
+                  body: `✅ Fork-based contribution detected. Thank you for following the recommended workflow!`
+                });
+              }
+            } catch (error) {
+              // User is not a collaborator, using fork
+              console.log(`User ${author} is contributing via fork`);
+            }

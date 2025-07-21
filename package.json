@@ -24,7 +24,8 @@
     "commit:patterns": "node scripts/commit-patterns.js",
     "submit:patterns": "node scripts/submit-patterns.js",
     "clean:pending": "rm -rf src/experiment/components/pending/*",
-    "export:approved": "node scripts/export-approved.js"
+    "export:approved": "node scripts/export-approved.js",
+    "setup:contributor": "node scripts/setup-contributor.js"
   },
   "dependencies": {
     "@dbml/core": "^3.13.8-alpha.0",
