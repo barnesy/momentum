@@ -1,0 +1,103 @@
+// Analytics & Metrics Schema
+// This schema tracks user behavior and system performance
+
+Project analytics {
+  database_type: 'PostgreSQL'
+  Note: 'Analytics and metrics tracking schema'
+}
+
+Table page_views {
+  id bigint [pk, increment]
+  session_id varchar [not null]
+  user_id int
+  page_url varchar [not null]
+  referrer_url varchar
+  user_agent varchar
+  ip_address inet
+  country_code varchar(2)
+  viewed_at timestamp [default: 'now()']
+  duration_seconds int
+  
+  Indexes {
+    session_id [name: 'idx_page_views_session']
+    user_id [name: 'idx_page_views_user']
+    viewed_at [name: 'idx_page_views_time']
+    (page_url, viewed_at) [name: 'idx_page_views_url_time']
+  }
+}
+
+Table events {
+  id bigint [pk, increment]
+  event_name varchar [not null]
+  event_category varchar [not null]
+  user_id int
+  session_id varchar
+  properties jsonb
+  created_at timestamp [default: 'now()']
+  
+  Indexes {
+    (event_name, created_at) [name: 'idx_events_name_time']
+    user_id [name: 'idx_events_user']
+    created_at [name: 'idx_events_time']
+  }
+}
+
+Table metrics {
+  id bigint [pk, increment]
+  metric_name varchar [not null]
+  metric_value decimal [not null]
+  metric_unit varchar
+  tags jsonb
+  recorded_at timestamp [default: 'now()']
+  
+  Indexes {
+    (metric_name, recorded_at) [name: 'idx_metrics_name_time']
+    recorded_at [name: 'idx_metrics_time']
+  }
+}
+
+Table user_cohorts {
+  id int [pk, increment]
+  cohort_name varchar [unique, not null]
+  cohort_date date [not null]
+  user_count int [default: 0]
+  properties jsonb
+  created_at timestamp [default: 'now()']
+  
+  Indexes {
+    cohort_date [name: 'idx_cohorts_date']
+  }
+}
+
+Table user_cohort_members {
+  cohort_id int [not null]
+  user_id int [not null]
+  joined_at timestamp [default: 'now()']
+  
+  Indexes {
+    (cohort_id, user_id) [pk]
+    user_id [name: 'idx_cohort_members_user']
+  }
+}
+
+// Enums
+Enum event_category {
+  user_action
+  system_event
+  error
+  performance
+  security
+}
+
+Enum metric_unit {
+  count
+  milliseconds
+  seconds
+  bytes
+  percentage
+  ratio
+}
+
+// Relationships
+Ref: user_cohort_members.cohort_id > user_cohorts.id [delete: cascade]
+// Note: user_id references would connect to users table in main schema

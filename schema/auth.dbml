@@ -1,0 +1,89 @@
+// Authentication & Authorization Schema
+// This schema handles user authentication and permissions
+
+Project auth_system {
+  database_type: 'PostgreSQL'
+  Note: 'Authentication and authorization schema'
+}
+
+Table auth_users {
+  id int [pk, increment]
+  email varchar [unique, not null]
+  password_hash varchar [not null]
+  email_verified boolean [default: false]
+  created_at timestamp [default: 'now()']
+  updated_at timestamp
+  last_login timestamp
+  
+  Indexes {
+    email [unique, name: 'idx_auth_users_email']
+  }
+}
+
+Table auth_sessions {
+  id varchar [pk]
+  user_id int [not null]
+  expires_at timestamp [not null]
+  created_at timestamp [default: 'now()']
+  
+  Indexes {
+    user_id [name: 'idx_sessions_user']
+    expires_at [name: 'idx_sessions_expires']
+  }
+}
+
+Table auth_roles {
+  id int [pk, increment]
+  name varchar [unique, not null]
+  description text
+  created_at timestamp [default: 'now()']
+}
+
+Table auth_permissions {
+  id int [pk, increment]
+  resource varchar [not null]
+  action varchar [not null]
+  description text
+  
+  Indexes {
+    (resource, action) [unique, name: 'idx_permissions_resource_action']
+  }
+}
+
+Table user_roles {
+  user_id int [not null]
+  role_id int [not null]
+  assigned_at timestamp [default: 'now()']
+  assigned_by int
+  
+  Indexes {
+    (user_id, role_id) [pk]
+  }
+}
+
+Table role_permissions {
+  role_id int [not null]
+  permission_id int [not null]
+  granted_at timestamp [default: 'now()']
+  
+  Indexes {
+    (role_id, permission_id) [pk]
+  }
+}
+
+// Enums
+Enum auth_action {
+  create
+  read
+  update
+  delete
+  execute
+}
+
+// Relationships
+Ref: auth_sessions.user_id > auth_users.id [delete: cascade]
+Ref: user_roles.user_id > auth_users.id [delete: cascade]
+Ref: user_roles.role_id > auth_roles.id [delete: cascade]
+Ref: user_roles.assigned_by > auth_users.id
+Ref: role_permissions.role_id > auth_roles.id [delete: cascade]
+Ref: role_permissions.permission_id > auth_permissions.id [delete: cascade]

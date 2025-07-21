@@ -1,0 +1,45 @@
+{
+  "schemas": [
+    {
+      "id": "momentum",
+      "name": "Momentum Main",
+      "description": "Main database schema for the Momentum project",
+      "filename": "momentum.dbml",
+      "category": "core",
+      "lastModified": "2025-07-21"
+    },
+    {
+      "id": "auth",
+      "name": "Authentication",
+      "description": "User authentication and authorization schema",
+      "filename": "auth.dbml",
+      "category": "security",
+      "lastModified": "2025-07-21"
+    },
+    {
+      "id": "analytics",
+      "name": "Analytics",
+      "description": "Analytics and metrics tracking schema",
+      "filename": "analytics.dbml",
+      "category": "monitoring",
+      "lastModified": "2025-07-21"
+    }
+  ],
+  "categories": {
+    "core": {
+      "name": "Core",
+      "color": "primary",
+      "icon": "Storage"
+    },
+    "security": {
+      "name": "Security",
+      "color": "error",
+      "icon": "Security"
+    },
+    "monitoring": {
+      "name": "Monitoring",
+      "color": "info",
+      "icon": "Analytics"
+    }
+  }
+}
