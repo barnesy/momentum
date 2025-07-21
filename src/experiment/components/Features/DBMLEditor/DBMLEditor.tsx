@@ -49,6 +49,7 @@ import {
 } from '@mui/icons-material';
 import Editor from '@monaco-editor/react';
 import { Parser, exporter } from '@dbml/core';
+import { run as renderDiagram } from '@softwaretechnik/dbml-renderer/lib/api';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -223,6 +224,8 @@ export const DBMLEditor: React.FC = () => {
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
   const [syntaxReferenceOpen, setSyntaxReferenceOpen] = useState(false);
   const [projectName, setProjectName] = useState('momentum-db');
+  const [diagramSVG, setDiagramSVG] = useState<string | null>(null);
+  const [diagramError, setDiagramError] = useState<string | null>(null);
 
   // Parse DBML schema
   const parseDBML = useCallback((schema: string) => {
@@ -252,6 +255,32 @@ export const DBMLEditor: React.FC = () => {
     }, 500);
     return () => clearTimeout(timeoutId);
   }, [dbml, parseDBML]);
+
+  // Generate diagram when DBML changes
+  const generateDiagram = useCallback(() => {
+    if (!dbml) {
+      setDiagramSVG(null);
+      return;
+    }
+
+    try {
+      // Generate SVG diagram
+      const svg = renderDiagram(dbml, 'svg');
+      setDiagramSVG(svg);
+      setDiagramError(null);
+    } catch (error: any) {
+      setDiagramError(error.message || 'Failed to generate diagram');
+      setDiagramSVG(null);
+    }
+  }, [dbml]);
+
+  // Auto-generate diagram on change
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      generateDiagram();
+    }, 1000);
+    return () => clearTimeout(timeoutId);
+  }, [dbml, generateDiagram]);
 
   // Export to SQL
   const exportToSQL = useCallback(() => {
@@ -547,25 +576,66 @@ export const DBMLEditor: React.FC = () => {
 
           {/* Visual Diagram */}
           <TabPanel value={tabValue} index={2}>
-            <Alert severity="info" icon={<InfoIcon />}>
-              <Typography variant="body2">
-                To visualize your schema as an interactive diagram:
-              </Typography>
-              <ol style={{ margin: '8px 0 0 0', paddingLeft: '20px' }}>
-                <li>Copy your DBML schema from the editor</li>
-                <li>Visit <a href="https://dbdiagram.io/d" target="_blank" rel="noopener noreferrer">dbdiagram.io</a></li>
-                <li>Paste your schema and click "Generate Diagram"</li>
-              </ol>
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={<CopyIcon />}
-                onClick={() => copyToClipboard(dbml)}
-                sx={{ mt: 2 }}
-              >
-                Copy Schema
-              </Button>
-            </Alert>
+            {diagramError ? (
+              <Alert severity="error" icon={<ErrorIcon />}>
+                <strong>Diagram Generation Error:</strong> {diagramError}
+              </Alert>
+            ) : diagramSVG ? (
+              <Box>
+                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                  <Typography variant="h6">Database Schema Diagram</Typography>
+                  <Stack direction="row" spacing={1}>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      startIcon={<DownloadIcon />}
+                      onClick={() => {
+                        const blob = new Blob([diagramSVG], { type: 'image/svg+xml' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'database-diagram.svg';
+                        a.click();
+                        URL.revokeObjectURL(url);
+                      }}
+                    >
+                      Download SVG
+                    </Button>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      startIcon={<LinkIcon />}
+                      href="https://dbdiagram.io/d"
+                      target="_blank"
+                    >
+                      Open in dbdiagram.io
+                    </Button>
+                  </Stack>
+                </Box>
+                
+                <Paper 
+                  variant="outlined" 
+                  sx={{ 
+                    p: 2, 
+                    overflow: 'auto',
+                    maxHeight: '70vh',
+                    backgroundColor: 'background.default',
+                    '& svg': {
+                      maxWidth: '100%',
+                      height: 'auto'
+                    }
+                  }}
+                >
+                  <div dangerouslySetInnerHTML={{ __html: diagramSVG }} />
+                </Paper>
+              </Box>
+            ) : (
+              <Alert severity="info" icon={<InfoIcon />}>
+                <Typography variant="body2">
+                  Enter valid DBML in the editor to generate a visual diagram
+                </Typography>
+              </Alert>
+            )}
 
             {parsedSchema && (
               <Box sx={{ mt: 3 }}>
