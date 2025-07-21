@@ -83,7 +83,7 @@ Table components {
   props_schema json
   created_at timestamp [default: 'now()']
   updated_at timestamp
-  created_by int [ref: > users.id]
+  created_by int
   
   Indexes {
     (category, status) [name: 'idx_component_category_status']
@@ -95,8 +95,8 @@ Table components {
 
 Table component_reviews {
   id int [pk, increment]
-  component_id int [ref: > components.id [delete: cascade], not null]
-  reviewer_id int [ref: > users.id, not null]
+  component_id int [not null]
+  reviewer_id int [not null]
   status review_status [not null]
   feedback text
   reviewed_at timestamp [default: 'now()']
@@ -115,14 +115,14 @@ Table themes {
   is_active boolean [default: false]
   created_at timestamp [default: 'now()']
   updated_at timestamp
-  created_by int [ref: > users.id]
+  created_by int
   
   Note: 'Material-UI theme configurations'
 }
 
 Table github_connections {
   id int [pk, increment]
-  user_id int [ref: > users.id, not null]
+  user_id int [not null]
   github_username varchar [not null]
   access_token varchar [not null]
   webhook_secret varchar
@@ -136,8 +136,8 @@ Table github_connections {
 
 Table ai_interactions {
   id int [pk, increment]
-  user_id int [ref: > users.id]
-  component_id int [ref: > components.id]
+  user_id int
+  component_id int
   interaction_type varchar [not null]
   prompt text [not null]
   response text
@@ -194,7 +194,14 @@ Enum user_role {
   viewer
 }
 
-// Note: Relationships are defined inline within table definitions above`;
+// Table relationships
+Ref: components.created_by > users.id
+Ref: component_reviews.component_id > components.id [delete: cascade]
+Ref: component_reviews.reviewer_id > users.id
+Ref: themes.created_by > users.id
+Ref: github_connections.user_id - users.id  // one-to-one
+Ref: ai_interactions.user_id > users.id
+Ref: ai_interactions.component_id > components.id`;
 
 interface ParsedSchema {
   tables: any[];
