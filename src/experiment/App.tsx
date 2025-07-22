@@ -85,7 +85,7 @@ function App() {
               },
             }}
           />
-          <BrowserRouter basename="/src/experiment">
+          <BrowserRouter>
             <AppRouter />
           </BrowserRouter>
         </ThemeProvider>

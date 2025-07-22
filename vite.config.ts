@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  root: 'src/experiment',
   server: {
     port: 5173,
     https: false,
@@ -16,17 +17,16 @@ export default defineConfig({
       '@theme': resolve(__dirname, './src/theme'),
       '@hooks': resolve(__dirname, './src/hooks'),
       '@types': resolve(__dirname, './src/types'),
-      '@utils': resolve(__dirname, './src/utils')
+      '@utils': resolve(__dirname, './src/utils'),
+      '@/experiment': resolve(__dirname, './src/experiment')
     }
   },
   build: {
     target: 'esnext',
-    outDir: 'dist',
+    outDir: '../../dist',
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        demo: resolve(__dirname, 'src/demo/index.html'),
-        experiment: resolve(__dirname, 'src/experiment/index.html')
+        main: resolve(__dirname, 'src/experiment/index.html')
       }
     }
   }

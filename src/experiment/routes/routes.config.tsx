@@ -15,6 +15,7 @@ import {
   Analytics as AnalyticsIcon,
   Error as ErrorIcon,
   Speed as SpeedIcon,
+  NetworkCheck as NetworkCheckIcon,
   BugReport as BugReportIcon,
   Widgets as WidgetsIcon,
   Palette as PaletteIcon,
@@ -30,7 +31,7 @@ const SSEConnection = lazy(() => import('../components/Features/Connection/SSECo
 const ContextManager = lazy(() => import('../components/Features/Context/ContextManager').then(m => ({ default: m.ContextManager })));
 const AIIntegration = lazy(() => import('../components/Features/AI/AIIntegration').then(m => ({ default: m.AIIntegration })));
 const GitHubIntegration = lazy(() => import('../components/Features/GitHub/GitHubIntegration').then(m => ({ default: m.GitHubIntegration })));
-const Performance = lazy(() => import('../components/Features/Performance/Performance').then(m => ({ default: m.Performance })));
+const NetworkTraffic = lazy(() => import('../components/Features/NetworkTraffic/NetworkTraffic').then(m => ({ default: m.NetworkTraffic })));
 const ThemeEditor = lazy(() => import('../components/Features/ThemeEditor/ThemeEditor').then(m => ({ default: m.ThemeEditor })));
 const ComponentGenerator = lazy(() => import('../components/Features/ComponentGenerator/ComponentGenerator').then(m => ({ default: m.ComponentGenerator })));
 const PatternCatalog = lazy(() => import('../components/Features/PatternCatalog/PatternCatalog').then(m => ({ default: m.PatternCatalog })));
@@ -64,7 +65,7 @@ export const ROUTE_PATHS = {
   CONTEXT: '/context',
   AI: '/ai',
   GITHUB: '/github',
-  PERFORMANCE: '/performance',
+  NETWORK_TRAFFIC: '/network-traffic',
   THEME_EDITOR: '/theme-editor',
   COMPONENT_GENERATOR: '/component-generator',
   PATTERN_GENERATOR: '/pattern-generator',
@@ -89,53 +90,16 @@ export const routes: RouteConfig[] = [
     description: 'Learn how to use the Experimentation Lab',
   },
   
-  // Core Features
-  {
-    id: 'connection',
-    path: ROUTE_PATHS.CONNECTION,
-    label: 'SSE Connection',
-    icon: <BubbleChartIcon />,
-    component: SSEConnection,
-    section: 'Core Features',
-    description: 'Server-Sent Events connection management',
-  },
-  {
-    id: 'context',
-    path: ROUTE_PATHS.CONTEXT,
-    label: 'Context Manager',
-    icon: <AccountTreeIcon />,
-    component: ContextManager,
-    section: 'Core Features',
-    description: 'Application context and state management',
-  },
-  {
-    id: 'ai',
-    path: ROUTE_PATHS.AI,
-    label: 'AI Integration',
-    icon: <PsychologyIcon />,
-    component: AIIntegration,
-    section: 'Core Features',
-    description: 'Claude AI integration and chat interface',
-  },
-  {
-    id: 'github',
-    path: ROUTE_PATHS.GITHUB,
-    label: 'GitHub Integration',
-    icon: <GitHubIcon />,
-    component: GitHubIntegration,
-    section: 'Core Features',
-    description: 'GitHub webhook and API integration',
-  },
   
-  // Performance & Monitoring
+  // Network & Monitoring
   {
-    id: 'performance',
-    path: ROUTE_PATHS.PERFORMANCE,
-    label: 'Performance Monitor',
-    icon: <SpeedIcon />,
-    component: Performance,
+    id: 'network-traffic',
+    path: ROUTE_PATHS.NETWORK_TRAFFIC,
+    label: 'SSE Monitoring',
+    icon: <NetworkCheckIcon />,
+    component: NetworkTraffic,
     section: 'Monitoring',
-    description: 'Real-time performance metrics and monitoring',
+    description: 'Real-time monitoring of GitHub App, server logs, and SSE traffic',
   },
   
   // Customization Tools

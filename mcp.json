@@ -1,16 +1,14 @@
 {
   "mcpServers": {
-    "browsertools": {
+    "mui-mcp": {
+      "type": "stdio",
       "command": "npx",
-      "args": [
-        "-y",
-        "@agentdesk/browsertools-mcp",
-        "--port", 
-        "3000"
-      ],
-      "env": {
-        "NODE_ENV": "development"
-      }
+      "args": ["-y", "@mui/mcp@latest"]
+    },
+    "browsertools": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@agentdeskai/browser-tools-mcp"]
     }
   }
 }

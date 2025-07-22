@@ -233,6 +233,120 @@ function handleSSEConnection(req, res) {
   });
 }
 
+// Network Monitor SSE clients
+const networkMonitorClients = new Map();
+let networkMonitorClientId = 0;
+
+// Handle Network Monitor SSE connections
+function handleNetworkMonitorSSE(req, res) {
+  const clientId = networkMonitorClientId++;
+  
+  // Set SSE headers
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive'
+  });
+  
+  // Send initial connection event
+  res.write(`data: ${JSON.stringify({
+    type: 'connected',
+    clientId,
+    timestamp: Date.now()
+  })}\n\n`);
+  
+  // Store client
+  networkMonitorClients.set(clientId, res);
+  console.log(`Network Monitor client ${clientId} connected. Total: ${networkMonitorClients.size}`);
+  
+  // Send initial data
+  sendNetworkMonitorUpdate(res);
+  
+  // Send updates every 5 seconds
+  const updateInterval = setInterval(() => {
+    sendNetworkMonitorUpdate(res);
+  }, 5000);
+  
+  // Send heartbeat every 30 seconds
+  const heartbeat = setInterval(() => {
+    res.write(':heartbeat\n\n');
+  }, 30000);
+  
+  // Handle client disconnect
+  req.on('close', () => {
+    clearInterval(heartbeat);
+    clearInterval(updateInterval);
+    networkMonitorClients.delete(clientId);
+    console.log(`Network Monitor client ${clientId} disconnected. Total: ${networkMonitorClients.size}`);
+  });
+}
+
+// Send network monitor updates
+function sendNetworkMonitorUpdate(res) {
+  // Send SSE connection data
+  const sseData = {
+    connections: Array.from(sseClients.entries()).map(([id, client]) => ({
+      id: `sse-${id}`,
+      clientId: `client-${id}`,
+      connected: true,
+      duration: Math.floor(Math.random() * 7200), // Simulated duration
+      messagesReceived: Math.floor(Math.random() * 1000),
+      messagesSent: Math.floor(Math.random() * 1200),
+      lastActivity: new Date()
+    })),
+    stats: {
+      activeConnections: sseClients.size,
+      totalMessages: metricsTracker.getSnapshot().totalEvents || 0,
+      bytesTransferred: Math.floor(Math.random() * 10000000) // Simulated
+    }
+  };
+  
+  res.write(`event: sse-update\ndata: ${JSON.stringify(sseData)}\n\n`);
+}
+
+// Broadcast to network monitor clients
+function broadcastToNetworkMonitor(eventType, data) {
+  const message = `event: ${eventType}\ndata: ${JSON.stringify(data)}\n\n`;
+  
+  networkMonitorClients.forEach((client, id) => {
+    try {
+      client.write(message);
+    } catch (error) {
+      console.error(`Failed to send to network monitor client ${id}:`, error);
+      networkMonitorClients.delete(id);
+    }
+  });
+}
+
+// Get human-readable action for GitHub events
+function getEventAction(eventName, payload) {
+  switch (eventName) {
+    case 'push':
+      const commits = payload.commits?.length || 0;
+      return `pushed ${commits} commit${commits !== 1 ? 's' : ''}`;
+    case 'pull_request':
+      return `${payload.action} PR #${payload.pull_request.number}`;
+    case 'issue':
+      return `${payload.action} issue #${payload.issue.number}`;
+    case 'issue_comment':
+      return `commented on #${payload.issue.number}`;
+    case 'release':
+      return `${payload.action} release ${payload.release.tag_name}`;
+    case 'create':
+      return `created ${payload.ref_type} ${payload.ref}`;
+    case 'delete':
+      return `deleted ${payload.ref_type} ${payload.ref}`;
+    case 'fork':
+      return 'forked repository';
+    case 'star':
+      return payload.action === 'created' ? 'starred' : 'unstarred';
+    case 'watch':
+      return 'started watching';
+    default:
+      return payload.action || eventName;
+  }
+}
+
 // Handle context update from client
 async function handleContextUpdate(req, res) {
   let body = '';
@@ -469,9 +583,26 @@ webhooks.onAny(async ({ name, payload }) => {
       timestamp: Date.now()
     });
     
+    // Send GitHub event to network monitor clients
+    broadcastToNetworkMonitor('github-event', {
+      type: name,
+      repository: payload.repository?.name || 'unknown',
+      user: payload.sender?.login || payload.pusher?.name || 'unknown',
+      action: getEventAction(name, payload),
+      timestamp: Date.now()
+    });
+    
     console.log(`Processed ${name} in ${Date.now() - startTime}ms`);
   } catch (error) {
     console.error(`Error processing ${name}:`, error);
+    
+    // Send error to network monitor
+    broadcastToNetworkMonitor('server-log', {
+      level: 'error',
+      message: `Error processing ${name}: ${error.message}`,
+      source: 'webhook-handler',
+      timestamp: Date.now()
+    });
   }
 });
 
@@ -600,6 +731,12 @@ const server = http.createServer((req, res) => {
   // Server-Sent Events endpoint
   if (req.url === '/events' && req.method === 'GET') {
     handleSSEConnection(req, res);
+    return;
+  }
+  
+  // Network Monitor SSE endpoint
+  if (req.url === '/api/network-monitor' && req.method === 'GET') {
+    handleNetworkMonitorSSE(req, res);
     return;
   }
   
@@ -1049,4 +1186,47 @@ server.listen(PORT, () => {
   console.log(`GitHub App server running on port ${PORT}`);
   console.log(`WebSocket server running on port 8765`);
   console.log('Ready to receive webhooks!');
+  
+  // Send startup log to network monitor
+  broadcastToNetworkMonitor('server-log', {
+    level: 'info',
+    message: `Server started on port ${PORT}`,
+    source: 'server.js',
+    timestamp: Date.now()
+  });
 });
+
+// Override console methods to capture logs
+const originalConsoleLog = console.log;
+const originalConsoleError = console.error;
+const originalConsoleWarn = console.warn;
+
+console.log = (...args) => {
+  originalConsoleLog(...args);
+  broadcastToNetworkMonitor('server-log', {
+    level: 'info',
+    message: args.join(' '),
+    source: 'console.log',
+    timestamp: Date.now()
+  });
+};
+
+console.error = (...args) => {
+  originalConsoleError(...args);
+  broadcastToNetworkMonitor('server-log', {
+    level: 'error',
+    message: args.join(' '),
+    source: 'console.error',
+    timestamp: Date.now()
+  });
+};
+
+console.warn = (...args) => {
+  originalConsoleWarn(...args);
+  broadcastToNetworkMonitor('server-log', {
+    level: 'warn',
+    message: args.join(' '),
+    source: 'console.warn',
+    timestamp: Date.now()
+  });
+};
