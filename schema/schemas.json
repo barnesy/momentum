@@ -1,6 +1,14 @@
 {
   "schemas": [
     {
+      "id": "opengov",
+      "name": "OpenGov Main",
+      "description": "Main database schema for the OpenGov project",
+      "filename": "opengov.dbml",
+      "category": "core",
+      "lastModified": "2025-07-22"
+    },
+    {
       "id": "momentum",
       "name": "Momentum Main",
       "description": "Main database schema for the Momentum project",

@@ -11,10 +11,10 @@
   /* Custom spacing scale */
   --spacing-unit: 8px;
   
-  /* Custom colors that complement MUI */
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  /* OpenGov brand colors */
+  --gradient-primary: linear-gradient(135deg, #2E5BBA 0%, #1E4A8A 100%);
+  --gradient-secondary: linear-gradient(135deg, #FF6B35 0%, #E55A2B 100%);
+  --gradient-success: linear-gradient(135deg, #388E3C 0%, #2E7D32 100%);
   
   /* Custom shadows */
   --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -29,8 +29,8 @@
 
 /* Dark mode CSS variables */
 [data-theme="dark"] {
-  --gradient-primary: linear-gradient(135deg, #434343 0%, #000000 100%);
-  --gradient-secondary: linear-gradient(135deg, #3b3b3b 0%, #1a1a1a 100%);
+  --gradient-primary: linear-gradient(135deg, #1E4A8A 0%, #0D2B4A 100%);
+  --gradient-secondary: linear-gradient(135deg, #E55A2B 0%, #CC4A1A 100%);
   --shadow-soft: 0 2px 8px rgba(255, 255, 255, 0.08);
   --shadow-medium: 0 4px 16px rgba(255, 255, 255, 0.12);
   --shadow-strong: 0 8px 32px rgba(255, 255, 255, 0.16);

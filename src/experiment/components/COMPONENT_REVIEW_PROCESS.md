@@ -89,9 +89,11 @@ Components in `pending/` are reviewed for:
 ## Current Components in Review
 
 ### Pending
-- **DashboardDataTableCard** - Comprehensive dashboard data table component with search, sorting, pagination, and action buttons
-- **DashboardDataTableCardDemo** - Full demonstration component showing multiple configurations and use cases
-- **TestPage** - Simple test implementation for the DashboardDataTableCard component
+- **PageHeader** - Comprehensive page header component with breadcrumbs, user info, metadata, and actions based on OpenGov schema
+- **PageHeaderDemo** - Full demonstration component showing different variants and use cases across government domains
+- **WorkflowCardCompact** - Compact workflow card component for displaying process steps
+- **WorkflowCardStandard** - Standard workflow card with enhanced details and progress tracking
+- **WorkflowCardExpanded** - Expanded workflow card with full activity timeline and detailed information
 
 ### Approved (Staging)
 - **BudgetCategoryCard** - Category-wise budget tracking with visual indicators
@@ -101,6 +103,9 @@ Components in `pending/` are reviewed for:
 - **Budgeting/ExpenseTrackerCard** - Needs pagination, empty state, i18n
 - **Budgeting/BudgetProgressCard** - Needs period flexibility, better projections
 - **Budgeting/FinancialGoalCard** - Needs date validation, currency support
+- **DashboardDataTableCard** - Comprehensive dashboard data table component with search, sorting, pagination, and action buttons
+- **DashboardDataTableCardDemo** - Full demonstration component showing multiple configurations and use cases
+- **TestPage** - Simple test implementation for the DashboardDataTableCard component
 
 *See `rejected/Budgeting/REJECTION_NOTES.md` for detailed feedback*
 
@@ -130,6 +135,20 @@ Components in `pending/` are reviewed for:
 - [ ] **Code View displays correctly**: Minimal example generates properly
 - [ ] **Syntax highlighting works**: Code is readable with proper color coding
 - [ ] **Props formatting**: Complex props display with correct indentation
+
+## Special Review Criteria for PageHeader Components
+
+### PageHeader
+- [ ] **Schema Integration**: Properly integrates with OpenGov database schema structure
+- [ ] **User Information**: Displays user details, roles, and departments correctly
+- [ ] **Metadata Display**: Shows timestamps, locations, status, priority, and tags appropriately
+- [ ] **Breadcrumbs**: Navigation breadcrumbs work correctly and are accessible
+- [ ] **Actions**: Action buttons are properly positioned and functional
+- [ ] **Variants**: All three variants (default, compact, detailed) render correctly
+- [ ] **Responsive Design**: Adapts well to different screen sizes
+- [ ] **Accessibility**: Proper ARIA labels and keyboard navigation
+- [ ] **Theme Integration**: Uses Material-UI theme colors and spacing consistently
+- [ ] **Performance**: Renders efficiently with various prop combinations
 
 ## Special Review Criteria for DataTable Components
 
@@ -211,6 +230,17 @@ When reviewing components:
 5. Confirm the import path is correct
 
 ## Component-Specific Review Notes
+
+### PageHeader Features
+- **Schema Integration**: Designed specifically for OpenGov database schema with users, departments, locations, etc.
+- **Multiple Variants**: Default, compact, and detailed variants for different use cases
+- **Breadcrumb Navigation**: Hierarchical navigation with icons and proper linking
+- **User Information**: Avatar, name, role, and department display with chips
+- **Rich Metadata**: Timestamps, locations, status, priority, and tags with appropriate styling
+- **Action Buttons**: Configurable action buttons with tooltips and proper positioning
+- **Responsive Design**: Adapts to different screen sizes and orientations
+- **Accessibility**: Proper ARIA labels, keyboard navigation, and semantic HTML
+- **Theme Integration**: Uses Material-UI theme colors, spacing, and typography consistently
 
 ### DashboardDataTableCard Features
 - **Search & Filter**: Built-in search functionality across all data fields

@@ -86,6 +86,18 @@ export const ComponentGenerator: React.FC = () => {
       path: 'pending/Workflow/WorkflowCardExpanded',
       hasDemo: true,
     },
+    {
+      name: 'PageHeader',
+      component: PendingComponents.PageHeader || (() => <div>Component not found</div>),
+      path: 'pending/PageHeader',
+      hasDemo: true,
+    },
+    {
+      name: 'PageHeaderDemo',
+      component: PendingComponents.PageHeaderDemo || (() => <div>Component not found</div>),
+      path: 'pending/PageHeaderDemo',
+      hasDemo: true,
+    },
   ];
 
   const approvedComponents: ComponentInfo[] = [
@@ -398,6 +410,25 @@ export const Example = () => {
       },
       DashboardDataTableCardDemo: {}, // This component renders its own demo
       TestPage: {}, // This component renders its own demo
+      PageHeader: {
+        title: 'City Hall Renovation Project',
+        subtitle: 'Procurement and construction management for municipal building renovation',
+        user: {
+          name: 'Sarah Johnson',
+          role: 'Project Manager',
+          department: 'Public Works',
+        },
+        metadata: {
+          created: new Date('2024-01-15'),
+          updated: new Date('2024-07-22'),
+          location: '123 Main Street, Downtown',
+          status: 'active',
+          priority: 'high',
+          tags: ['construction', 'municipal', 'q4-2024'],
+        },
+        variant: 'detailed',
+      },
+      PageHeaderDemo: {}, // This component renders its own demo
     };
 
     return (
@@ -486,9 +517,14 @@ export const Example = () => {
       <Card sx={{ mb: 3 }}>
         <CardContent>
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-            <Typography variant="h4" color="primary">
-              🎨 Component Review Dashboard
-            </Typography>
+            <Box>
+              <Typography variant="h4" color="primary">
+                🎨 Component Review Dashboard
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                Review components for code quality, MUI compliance, TypeScript usage, and accessibility
+              </Typography>
+            </Box>
             <Button
               onClick={() => setShowRules(!showRules)}
               startIcon={showRules ? <VisibilityOffIcon /> : <VisibilityIcon />}
@@ -510,17 +546,21 @@ export const Example = () => {
               }}
             >
               <Typography variant="h6" gutterBottom color="primary.dark">
-                Component Review Process
+                Quick Review Guidelines
               </Typography>
               
               <Grid container spacing={3} sx={{ mt: 1 }}>
                 <Grid size={{ xs: 12, md: 4 }}>
                   <Stack spacing={1}>
                     <Typography variant="subtitle2" color="primary.dark">
-                      📁 Pending Components
+                      📁 Pending Review
                     </Typography>
-                    <Typography variant="body2">
-                      New components awaiting review. Check code quality, MUI compliance, and TypeScript usage.
+                    <Typography variant="body2" component="div">
+                      • Check code quality & TypeScript types<br/>
+                      • Verify MUI theme integration<br/>
+                      • Test responsive design<br/>
+                      • Review accessibility features<br/>
+                      • Use code view (&lt;&gt; icon) to see usage examples
                     </Typography>
                   </Stack>
                 </Grid>
@@ -528,10 +568,14 @@ export const Example = () => {
                 <Grid size={{ xs: 12, md: 4 }}>
                   <Stack spacing={1}>
                     <Typography variant="subtitle2" color="success.dark">
-                      ✅ Approved Components
+                      ✅ Approve → Staging
                     </Typography>
-                    <Typography variant="body2">
-                      Components that passed review and are staged for production. Final testing before deployment.
+                    <Typography variant="body2" component="div">
+                      • Component meets all standards<br/>
+                      • Ready for production testing<br/>
+                      • Move to approved/ folder<br/>
+                      • Update imports if needed<br/>
+                      • Final integration review
                     </Typography>
                   </Stack>
                 </Grid>
@@ -539,10 +583,14 @@ export const Example = () => {
                 <Grid size={{ xs: 12, md: 4 }}>
                   <Stack spacing={1}>
                     <Typography variant="subtitle2" color="error.dark">
-                      ❌ Rejected Components
+                      ❌ Reject → Needs Work
                     </Typography>
-                    <Typography variant="body2">
-                      Components that need improvements. Check rejection notes for required changes.
+                    <Typography variant="body2" component="div">
+                      • Add REJECTION_NOTES.md<br/>
+                      • Specify required changes<br/>
+                      • Move to rejected/ folder<br/>
+                      • Developer can resubmit<br/>
+                      • Track improvement progress
                     </Typography>
                   </Stack>
                 </Grid>
