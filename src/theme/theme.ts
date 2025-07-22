@@ -4,15 +4,15 @@ import { ThemeConfig } from '../types/theme.types';
 export const defaultThemeConfig: ThemeConfig = {
   mode: 'light',
   palette: {
-    primary: '#667eea',
-    secondary: '#764ba2',
-    error: '#f44336',
-    warning: '#ff9800',
-    info: '#2196f3',
-    success: '#00cc88',
+    primary: '#2E5BBA', // OpenGov Blue - primary brand color
+    secondary: '#FF6B35', // OpenGov Orange - accent color
+    error: '#D32F2F', // Material Design Red
+    warning: '#FF9800', // Material Design Orange
+    info: '#1976D2', // Material Design Blue
+    success: '#388E3C', // Material Design Green
     background: {
-      default: '#f5f5f5',
-      paper: '#ffffff',
+      default: '#F8F9FA', // Light gray background
+      paper: '#FFFFFF', // White paper background
     },
     text: {
       primary: 'rgba(0, 0, 0, 0.87)',
@@ -20,7 +20,7 @@ export const defaultThemeConfig: ThemeConfig = {
     },
   },
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"DM Sans", "Roboto", "Helvetica", "Arial", sans-serif',
     h1Size: 3,
     h2Size: 2,
     h3Size: 1.5,
@@ -72,8 +72,8 @@ export const createAppTheme = (config: ThemeConfig): Theme => {
         default: config.palette.background.default,
         paper: config.palette.background.paper,
       } : {
-        default: '#121212',
-        paper: '#1e1e1e',
+        default: '#1A1A1A', // Dark background for OpenGov dark mode
+        paper: '#2D2D2D', // Dark paper background
       },
     },
     typography: {
@@ -131,19 +131,19 @@ export const createAppTheme = (config: ThemeConfig): Theme => {
       MuiCssBaseline: {
         styleOverrides: {
           body: {
-            scrollbarColor: config.mode === 'light' ? "#959595 #e0e0e0" : "#6b6b6b #2b2b2b",
+            scrollbarColor: config.mode === 'light' ? "#2E5BBA #E8EAF6" : "#FF6B35 #2D2D2D",
             "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
-              backgroundColor: config.mode === 'light' ? "#e0e0e0" : "#2b2b2b",
+              backgroundColor: config.mode === 'light' ? "#E8EAF6" : "#2D2D2D",
               width: 12,
             },
             "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
               borderRadius: 8,
-              backgroundColor: config.mode === 'light' ? "#959595" : "#6b6b6b",
+              backgroundColor: config.mode === 'light' ? "#2E5BBA" : "#FF6B35",
               minHeight: 24,
-              border: `3px solid ${config.mode === 'light' ? "#e0e0e0" : "#2b2b2b"}`,
+              border: `3px solid ${config.mode === 'light' ? "#E8EAF6" : "#2D2D2D"}`,
             },
             "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover": {
-              backgroundColor: config.mode === 'light' ? "#717171" : "#8b8b8b",
+              backgroundColor: config.mode === 'light' ? "#1E4A8A" : "#E55A2B",
             },
           },
         },

@@ -1,0 +1,414 @@
+// ================= USERS & ORG STRUCTURE =================
+Table users {
+  id int [pk]
+  name varchar
+  email varchar
+  role varchar
+  phone varchar
+  department_id int
+}
+
+Table departments {
+  id int [pk]
+  name varchar
+}
+
+// ================= LOCATIONS =================
+Table locations {
+  id int [pk]
+  address varchar
+  city varchar
+  state varchar
+  zip_code varchar
+  parcel_number varchar
+  geometry geometry
+}
+
+// ================= SHARED ATTACHMENTS =================
+Table attachments {
+  id int [pk]
+  file_name varchar
+  file_url varchar
+  uploaded_by int
+  record_type varchar // polymorphic: 'record', 'contract', 'asset', 'budget', etc.
+  record_id int
+  created_at datetime
+}
+
+// ================= PERMITTING & LICENSING (PLC) =================
+Table records {
+  id int [pk]
+  type varchar
+  status varchar
+  applicant_id int
+  location_id int
+  project_name varchar
+  created_at datetime
+  updated_at datetime
+}
+
+Table workflow_steps {
+  id int [pk]
+  record_id int
+  step_type varchar
+  status varchar
+  assigned_to int
+  started_at datetime
+  completed_at datetime
+}
+
+Table inspections_plc {
+  id int [pk]
+  record_id int
+  inspector_id int
+  inspection_type varchar
+  scheduled_date date
+  result varchar
+  notes text
+}
+
+// ================= PROCUREMENT =================
+Table procurement_projects {
+  id int [pk]
+  title varchar
+  status varchar
+  project_contact_id int
+  procurement_contact_id int
+  department_id int
+  location_id int
+  created_at datetime
+  updated_at datetime
+}
+
+Table solicitations {
+  id int [pk]
+  project_id int
+  release_date date
+  due_date date
+  is_private boolean
+  category_codes varchar
+  timeline text
+}
+
+Table proposals {
+  id int [pk]
+  solicitation_id int
+  vendor_id int
+  submitted_at datetime
+  status varchar
+  total_price decimal
+}
+
+Table vendors {
+  id int [pk]
+  name varchar
+  ein varchar
+  uei varchar
+  duns varchar
+  public_profile_url varchar
+  subscribed boolean
+}
+
+Table contracts {
+  id int [pk]
+  project_id int
+  vendor_id int
+  title varchar
+  start_date date
+  end_date date
+  total_value decimal
+  cooperative boolean
+  piggybackable boolean
+  status varchar
+}
+
+// ================= ENTERPRISE ASSET MANAGEMENT (EAM) =================
+Table assets {
+  id int [pk]
+  name varchar
+  type varchar
+  status varchar
+  parent_id int
+  location_id int
+}
+
+Table eam_tasks {
+  id int [pk]
+  description varchar
+  status varchar
+  asset_id int
+  assigned_to int
+}
+
+Table eam_inspections {
+  id int [pk]
+  asset_id int
+  date date
+  type varchar
+  result varchar
+}
+
+Table resources {
+  id int [pk]
+  name varchar
+  type varchar
+  cost decimal
+}
+
+Table task_resources {
+  id int [pk]
+  task_id int
+  resource_id int
+  quantity decimal
+}
+
+Table eam_requests {
+  id int [pk]
+  description varchar
+  status varchar
+  asset_id int
+  task_id int
+  created_at datetime
+}
+
+// ================= UTILITY BILLING =================
+Table utility_accounts {
+  id int [pk]
+  account_number varchar
+  customer_id int
+  service_address_id int
+  status varchar
+  created_at datetime
+  updated_at datetime
+}
+
+Table utility_customers {
+  id int [pk]
+  name varchar
+  email varchar
+  phone varchar
+}
+
+Table utility_bills {
+  id int [pk]
+  account_id int
+  billing_period_start date
+  billing_period_end date
+  meter_reading decimal
+  bill_amount decimal
+  payment_status varchar
+  created_at datetime
+}
+
+Table utility_payments {
+  id int [pk]
+  bill_id int
+  amount decimal
+  payment_date datetime
+  method varchar
+  transaction_reference varchar
+}
+
+Table utility_services {
+  id int [pk]
+  name varchar
+  rate decimal
+  unit varchar
+}
+
+Table utility_usage {
+  id int [pk]
+  account_id int
+  service_id int
+  usage_amount decimal
+  usage_date date
+}
+
+// ================= BUDGETING & PLANNING =================
+Table budgets {
+  id int [pk]
+  fiscal_year int
+  status varchar
+  created_by int
+  created_at datetime
+  approved_at datetime
+}
+
+Table budget_entries {
+  id int [pk]
+  budget_id int
+  department_id int
+  fund varchar
+  account_code varchar
+  project_code varchar
+  amount decimal
+  entry_type varchar // 'operating', 'capital', 'workforce'
+}
+
+Table budget_proposals {
+  id int [pk]
+  title varchar
+  description text
+  status varchar
+  submitted_by int
+  submitted_at datetime
+  department_id int
+  linked_project_id int
+}
+
+Table budget_forecasts {
+  id int [pk]
+  budget_id int
+  month int
+  year int
+  forecast_amount decimal
+  actual_amount decimal
+  entry_id int
+}
+
+Table budget_workforce {
+  id int [pk]
+  budget_id int
+  position_title varchar
+  department_id int
+  fte decimal
+  salary decimal
+  benefits decimal
+}
+
+// ================= TAX & REVENUE (ERM) =================
+Table tax_customers {
+  id int [pk]
+  name varchar
+  email varchar
+  phone varchar
+  mailing_address varchar
+}
+
+Table tax_accounts {
+  id int [pk]
+  account_number varchar
+  customer_id int
+  type varchar // 'property', 'business', 'sales', etc.
+  status varchar
+  created_at datetime
+  updated_at datetime
+  location_id int
+}
+
+Table tax_bills {
+  id int [pk]
+  account_id int
+  bill_number varchar
+  tax_year int
+  due_date date
+  total_amount decimal
+  balance_due decimal
+  status varchar
+  created_at datetime
+}
+
+Table tax_payments {
+  id int [pk]
+  bill_id int
+  amount decimal
+  payment_date datetime
+  method varchar
+  reference_number varchar
+  payer_id int
+}
+
+Table tax_assessments {
+  id int [pk]
+  account_id int
+  assessed_value decimal
+  exemption_amount decimal
+  taxable_value decimal
+  millage_rate decimal
+  calculated_tax decimal
+  tax_year int
+  created_at datetime
+}
+
+Table tax_delinquencies {
+  id int [pk]
+  bill_id int
+  delinquent_date date
+  interest_accrued decimal
+  penalty_amount decimal
+  resolution_status varchar
+  resolved_at datetime
+}
+
+// ================= RELATIONSHIPS =================
+// Users & Orgs
+Ref: users.department_id > departments.id
+Ref: attachments.uploaded_by > users.id
+
+// Locations
+Ref: records.location_id > locations.id
+Ref: procurement_projects.location_id > locations.id
+Ref: assets.location_id > locations.id
+Ref: utility_accounts.service_address_id > locations.id
+Ref: tax_accounts.location_id > locations.id
+
+// PLC
+Ref: records.applicant_id > users.id
+Ref: workflow_steps.record_id > records.id
+Ref: workflow_steps.assigned_to > users.id
+Ref: inspections_plc.record_id > records.id
+Ref: inspections_plc.inspector_id > users.id
+
+// Procurement
+Ref: procurement_projects.project_contact_id > users.id
+Ref: procurement_projects.procurement_contact_id > users.id
+Ref: procurement_projects.department_id > departments.id
+Ref: solicitations.project_id > procurement_projects.id
+Ref: proposals.solicitation_id > solicitations.id
+Ref: proposals.vendor_id > vendors.id
+Ref: contracts.project_id > procurement_projects.id
+Ref: contracts.vendor_id > vendors.id
+
+// EAM
+Ref: assets.parent_id > assets.id
+Ref: eam_tasks.asset_id > assets.id
+Ref: eam_tasks.assigned_to > users.id
+Ref: eam_inspections.asset_id > assets.id
+Ref: task_resources.task_id > eam_tasks.id
+Ref: task_resources.resource_id > resources.id
+Ref: eam_requests.asset_id > assets.id
+Ref: eam_requests.task_id > eam_tasks.id
+
+// Utility Billing
+Ref: utility_accounts.customer_id > utility_customers.id
+Ref: utility_bills.account_id > utility_accounts.id
+Ref: utility_payments.bill_id > utility_bills.id
+Ref: utility_usage.account_id > utility_accounts.id
+Ref: utility_usage.service_id > utility_services.id
+
+// Budgeting
+Ref: budgets.created_by > users.id
+Ref: budget_entries.budget_id > budgets.id
+Ref: budget_entries.department_id > departments.id
+Ref: budget_forecasts.budget_id > budgets.id
+Ref: budget_forecasts.entry_id > budget_entries.id
+Ref: budget_proposals.submitted_by > users.id
+Ref: budget_proposals.department_id > departments.id
+Ref: budget_proposals.linked_project_id > procurement_projects.id
+Ref: budget_workforce.budget_id > budgets.id
+Ref: budget_workforce.department_id > departments.id
+
+// Tax & Revenue
+Ref: tax_accounts.customer_id > tax_customers.id
+Ref: tax_bills.account_id > tax_accounts.id
+Ref: tax_payments.bill_id > tax_bills.id
+Ref: tax_payments.payer_id > tax_customers.id
+Ref: tax_assessments.account_id > tax_accounts.id
+Ref: tax_delinquencies.bill_id > tax_bills.id
+
+
+Ref: "utility_payments"."bill_id" < "utility_services"."name"
+
+Ref: "assets"."type" < "eam_requests"."id"
+
+Ref: "procurement_projects"."project_contact_id" < "procurement_projects"."status"

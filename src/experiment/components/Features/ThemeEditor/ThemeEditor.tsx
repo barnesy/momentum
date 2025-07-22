@@ -222,7 +222,8 @@ export const ThemeEditor: React.FC = () => {
                         value={themeConfig.typography.fontFamily}
                         onChange={(e) => handleTypographyChange('fontFamily', e.target.value)}
                       >
-                        <MenuItem value='"Roboto", "Helvetica", "Arial", sans-serif'>Roboto (Default)</MenuItem>
+                        <MenuItem value='"DM Sans", "Roboto", "Helvetica", "Arial", sans-serif'>DM Sans (Default)</MenuItem>
+                        <MenuItem value='"Roboto", "Helvetica", "Arial", sans-serif'>Roboto</MenuItem>
                         <MenuItem value='"Inter", "Helvetica", "Arial", sans-serif'>Inter</MenuItem>
                         <MenuItem value='"Poppins", "Helvetica", "Arial", sans-serif'>Poppins</MenuItem>
                         <MenuItem value='"Open Sans", "Helvetica", "Arial", sans-serif'>Open Sans</MenuItem>

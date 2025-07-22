@@ -41,6 +41,7 @@ const BudgetCategoryCardPreview = lazy(() => import('../components/approved/Budg
 const TailwindTest = lazy(() => import('../components/Features/TailwindTest/TailwindTest').then(m => ({ default: m.TailwindTest })));
 const Onboarding = lazy(() => import('../components/Features/Onboarding/Onboarding').then(m => ({ default: m.Onboarding })));
 const DataTableTest = lazy(() => import('../components/rejected/DashboardDataTable/TestPage').then(m => ({ default: m.default })));
+const PageHeaderDemo = lazy(() => import('../components/pending/PageHeaderDemo').then(m => ({ default: m.default })));
 
 export interface RouteConfig {
   id: string;
@@ -75,6 +76,7 @@ export const ROUTE_PATHS = {
   BUDGET_CATEGORY_PREVIEW: '/budget-category-preview',
   TAILWIND_TEST: '/tailwind-test',
   DATATABLE_TEST: '/datatable-test',
+  PAGEHEADER_DEMO: '/pageheader-demo',
   NOT_FOUND: '/404',
 } as const;
 
@@ -179,6 +181,15 @@ export const routes: RouteConfig[] = [
     section: 'Demonstrations',
     description: 'Test the Dashboard DataTable Card component',
     isRejected: true,
+  },
+  {
+    id: 'pageheader-demo',
+    path: ROUTE_PATHS.PAGEHEADER_DEMO,
+    label: 'PageHeader Demo',
+    icon: <DataObjectIcon />,
+    component: PageHeaderDemo,
+    section: 'Demonstrations',
+    description: 'Demo of the PageHeader component with schema integration',
   },
 ];
 

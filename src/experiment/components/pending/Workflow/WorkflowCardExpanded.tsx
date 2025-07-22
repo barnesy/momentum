@@ -140,7 +140,7 @@ export const WorkflowCardExpanded: React.FC<WorkflowCardExpandedProps> = ({
       case 'completed': return 'success';
       case 'paused': return 'warning';
       case 'failed': return 'error';
-      default: return 'default';
+      default: return 'primary';
     }
   };
 
@@ -167,7 +167,7 @@ export const WorkflowCardExpanded: React.FC<WorkflowCardExpandedProps> = ({
       case 'high': return 'error';
       case 'medium': return 'warning';
       case 'low': return 'success';
-      default: return 'default';
+      default: return 'primary';
     }
   };
 
@@ -254,7 +254,7 @@ export const WorkflowCardExpanded: React.FC<WorkflowCardExpandedProps> = ({
                   label={`Due ${dueDate.toLocaleDateString()}`}
                   size="small"
                   variant="outlined"
-                  color={new Date() > dueDate ? 'error' : 'default'}
+                  color={new Date() > dueDate ? 'error' : 'primary'}
                 />
               )}
               {tags.map((tag, index) => (
@@ -367,47 +367,47 @@ export const WorkflowCardExpanded: React.FC<WorkflowCardExpandedProps> = ({
                         </Box>
                       }
                       secondary={
-                        <Box>
+                        <span>
                           {step.description && (
-                            <Typography variant="body2" color="text.secondary" gutterBottom>
+                            <span style={{ display: 'block', marginBottom: '8px' }}>
                               {step.description}
-                            </Typography>
+                            </span>
                           )}
-                          <Stack direction="row" spacing={2} sx={{ mt: 1 }}>
+                          <span style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
                             {step.assignee && (
-                              <Box display="flex" alignItems="center" gap={0.5}>
-                                <Avatar src={step.assignee.avatar} sx={{ width: 20, height: 20 }}>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <Avatar src={step.assignee.avatar} sx={{ width: 20, height: 20 }} component="span">
                                   {step.assignee.name[0]}
                                 </Avatar>
-                                <Typography variant="caption">
+                                <span style={{ fontSize: '0.75rem' }}>
                                   {step.assignee.name}
-                                </Typography>
-                              </Box>
+                                </span>
+                              </span>
                             )}
                             {step.estimatedHours && (
-                              <Typography variant="caption" color="text.secondary">
+                              <span style={{ fontSize: '0.75rem', color: 'rgba(0, 0, 0, 0.6)' }}>
                                 Est: {step.estimatedHours}h
-                              </Typography>
+                              </span>
                             )}
                             {step.actualHours && (
-                              <Typography variant="caption" color="text.secondary">
+                              <span style={{ fontSize: '0.75rem', color: 'rgba(0, 0, 0, 0.6)' }}>
                                 Actual: {step.actualHours}h
-                              </Typography>
+                              </span>
                             )}
                             {step.comments && step.comments > 0 && (
-                              <Box display="flex" alignItems="center" gap={0.5}>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                                 <Comment fontSize="small" />
-                                <Typography variant="caption">{step.comments}</Typography>
-                              </Box>
+                                <span style={{ fontSize: '0.75rem' }}>{step.comments}</span>
+                              </span>
                             )}
                             {step.attachments && step.attachments > 0 && (
-                              <Box display="flex" alignItems="center" gap={0.5}>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                                 <AttachFile fontSize="small" />
-                                <Typography variant="caption">{step.attachments}</Typography>
-                              </Box>
+                                <span style={{ fontSize: '0.75rem' }}>{step.attachments}</span>
+                              </span>
                             )}
-                          </Stack>
-                        </Box>
+                          </span>
+                        </span>
                       }
                     />
                     <ListItemSecondaryAction>
@@ -441,14 +441,14 @@ export const WorkflowCardExpanded: React.FC<WorkflowCardExpandedProps> = ({
                   {activities.slice(0, 5).map((activity) => (
                     <ListItem key={activity.id} alignItems="flex-start">
                       <ListItemIcon>
-                        <Avatar src={activity.user.avatar} sx={{ width: 32, height: 32 }}>
+                        <Avatar src={activity.user.avatar} sx={{ width: 32, height: 32 }} component="span">
                           {activity.user.name[0]}
                         </Avatar>
                       </ListItemIcon>
                       <ListItemText
                         primary={activity.description}
                         secondary={
-                          <Typography variant="caption" color="text.secondary">
+                          <Typography variant="caption" color="text.secondary" component="span">
                             {activity.user.name} • {activity.timestamp.toLocaleString()}
                           </Typography>
                         }

@@ -10,12 +10,6 @@ import {
   useMediaQuery,
   useTheme,
   alpha,
-  Fab,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
   Button,
   Breadcrumbs,
   Link,
@@ -23,9 +17,6 @@ import {
 import {
   Menu as MenuIcon,
   CheckCircle as CheckCircleIcon,
-  Add as AddIcon,
-  Close as CloseIcon,
-  Send as SendIcon,
   NavigateNext as NavigateNextIcon,
 } from '@mui/icons-material';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
@@ -37,7 +28,6 @@ export const AppLayout: React.FC = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [drawerOpen, setDrawerOpen] = useState(!isMobile);
   const [currentTab, setCurrentTab] = useState('');
-  const [promptPanelOpen, setPromptPanelOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -196,61 +186,9 @@ export const AppLayout: React.FC = () => {
         </Container>
       </Box>
 
-      {/* AI Prompt Panel FAB */}
-      <Fab
-        color="primary"
-        aria-label="AI Assistant"
-        sx={{
-          position: 'fixed',
-          bottom: 24,
-          right: 24,
-          zIndex: theme.zIndex.speedDial,
-        }}
-        onClick={() => setPromptPanelOpen(true)}
-      >
-        <AddIcon />
-      </Fab>
 
-      {/* AI Prompt Dialog */}
-      <Dialog
-        open={promptPanelOpen}
-        onClose={() => setPromptPanelOpen(false)}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>
-          AI Assistant
-          <IconButton
-            aria-label="close"
-            onClick={() => setPromptPanelOpen(false)}
-            sx={{
-              position: 'absolute',
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500],
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Enter your command"
-            fullWidth
-            variant="outlined"
-            multiline
-            rows={4}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setPromptPanelOpen(false)}>Cancel</Button>
-          <Button variant="contained" startIcon={<SendIcon />}>
-            Execute
-          </Button>
-        </DialogActions>
-      </Dialog>
+
+
     </>
   );
 };
